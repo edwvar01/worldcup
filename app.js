@@ -1153,9 +1153,22 @@ window.addEventListener("DOMContentLoaded", () => {
         // Use Firebase Realtime Sync
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data && data.fixtures && data.bracket) {
+            if (data && data.fixtures) {
                 appState.fixtures = data.fixtures;
-                appState.bracket = data.bracket;
+                
+                if (data.bracket) {
+                    const rounds = ['r32', 'r16', 'qf', 'sf'];
+                    rounds.forEach(r => {
+                        if (data.bracket[r]) {
+                            data.bracket[r].forEach((m, idx) => {
+                                if (m) appState.bracket[r][idx] = { ...appState.bracket[r][idx], ...m };
+                            });
+                        }
+                    });
+                    if (data.bracket.final) {
+                        appState.bracket.final = { ...appState.bracket.final, ...data.bracket.final };
+                    }
+                }
             }
             calculateStandings();
             
