@@ -1,4 +1,5 @@
 // FIFA World Cup 2026 - Hub & Simulator Logic
+const IS_ADMIN = window.location.pathname.toLowerCase().includes('admin.html');
 
 // 1. Qualified Teams Dataset (48 Teams)
 const TEAMS = {
@@ -720,11 +721,17 @@ function renderFixtures() {
                 </div>
                 
                 <div class="match-score-inputs">
+                    ${IS_ADMIN ? `
                     <input type="number" min="0" max="20" class="score-input" value="${m.homeScore !== null ? m.homeScore : ''}" 
                         onchange="updateMatchScore(${m.id}, 'home', this.value)" placeholder="-">
                     <span class="score-dash">:</span>
                     <input type="number" min="0" max="20" class="score-input" value="${m.awayScore !== null ? m.awayScore : ''}" 
                         onchange="updateMatchScore(${m.id}, 'away', this.value)" placeholder="-">
+                    ` : `
+                    <span class="score-badge">${m.homeScore !== null ? m.homeScore : '-'}</span>
+                    <span class="score-dash">:</span>
+                    <span class="score-badge">${m.awayScore !== null ? m.awayScore : '-'}</span>
+                    `}
                 </div>
                 
                 <div class="match-team team-b">
@@ -899,10 +906,14 @@ function renderBracket() {
                     <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
                     <span>${t.name}</span>
                 </div>
+                ${IS_ADMIN ? `
                 <input type="number" min="0" max="20" class="score-input knockout-score-input" 
                     style="width: 35px; height: 30px; font-size: 1rem; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" 
                     value="${score !== undefined && score !== null ? score : ''}" 
                     onchange="updateKnockoutScore('${round}', ${matchIdx}, '${side}', this.value)">
+                ` : `
+                <span class="score-badge bracket-score-badge">${score !== undefined && score !== null ? score : '-'}</span>
+                `}
             </div>
         `;
     };
@@ -1166,3 +1177,12 @@ function handleStatClick(type) {
         }
     }
 }
+
+// Sync across tabs if admin updates data
+window.addEventListener('storage', (e) => {
+    if (e.key === 'fifa2026_simulator_state') {
+        loadFromLocalStorage();
+        calculateStandings(); // Ensure derivations are intact
+        renderAll();
+    }
+});

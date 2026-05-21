@@ -22,8 +22,8 @@
             <a href="#" class="logo-area" onclick="switchTab('dashboard')">
                 <i class="fas fa-trophy logo-icon"></i>
                 <div style="display: flex; flex-direction: column;">
-                    <span class="logo-text">WORLD CUP 2026</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">UNITED HUB</span>
+                    <span class="logo-text">WORLD CUP 2026 <span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; vertical-align: top; margin-left: 5px;">ADMIN</span></span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">ADMIN DASHBOARD</span>
                 </div>
                 <span class="logo-tag">48 Teams</span>
             </a>
@@ -232,7 +232,9 @@
                     </p>
                 </div>
                 <div class="controls-row">
-                    <!-- Read-only view -->
+                    <button class="btn" style="color: var(--accent); border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);" onclick="resetAllPredictions()">
+                        <i class="fas fa-undo"></i> Reset All
+                    </button>
                 </div>
             </div>
 
@@ -247,7 +249,7 @@
             <div>
                 <h2 class="section-title">Tournament <span>Match Schedule</span></h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem; margin-bottom: 2rem;">
-                    View the latest real-time match scores and tournament schedule.
+                    Compute scores directly in the boxes below to dynamically re-calculate stand-alone group tables and bracket configurations.
                 </p>
             </div>
 
@@ -341,7 +343,7 @@
             <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 class="section-title">Knockout Phase <span>Tournament Bracket</span></h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance. View the real-time knockout progression.
+                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance. Enter real match scores to automatically progress the tournament.
                 </p>
             </div>
 
