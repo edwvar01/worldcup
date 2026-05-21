@@ -1,6 +1,25 @@
 // FIFA World Cup 2026 - Hub & Simulator Logic
 const IS_ADMIN = window.location.pathname.toLowerCase().includes('admin.html');
 
+// --- FIREBASE CONFIGURATION ---
+// PASTE YOUR FIREBASE CONFIG OBJECT HERE:
+const firebaseConfig = {
+  apiKey: "AIzaSyA73IUyC2Smxfilw_iQrf39k0mkPKbqMJw",
+  authDomain: "worldcup2026-de200.firebaseapp.com",
+  databaseURL: "https://worldcup2026-de200-default-rtdb.firebaseio.com",
+  projectId: "worldcup2026-de200",
+  storageBucket: "worldcup2026-de200.firebasestorage.app",
+  messagingSenderId: "961839917905",
+  appId: "1:961839917905:web:674332bacf9ffeec2c8170"
+};
+
+let dbRef = null;
+if (firebaseConfig.apiKey) {
+    firebase.initializeApp(firebaseConfig);
+    dbRef = firebase.database().ref('worldcup-state');
+}
+// ------------------------------
+
 // 1. Qualified Teams Dataset (48 Teams)
 const TEAMS = {
     // Group A
@@ -516,26 +535,30 @@ function resetAllPredictions() {
     document.getElementById("champion-display").style.display = "none";
 }
 
-// Local Storage Management
+// Storage Management (Firebase or Local fallback)
 function saveToLocalStorage() {
-    localStorage.setItem("fifa2026_simulator_state", JSON.stringify({
+    const data = {
         fixtures: appState.fixtures,
         bracket: appState.bracket
-    }));
+    };
+    if (dbRef) {
+        dbRef.set(data);
+    } else {
+        localStorage.setItem("fifa2026_simulator_state", JSON.stringify(data));
+    }
 }
 
 function loadFromLocalStorage() {
-    const saved = localStorage.getItem("fifa2026_simulator_state");
-    if (saved) {
-        try {
-            const parsed = JSON.parse(saved);
-            // Verify structure matches
-            if (parsed.fixtures && parsed.bracket) {
-                appState.fixtures = parsed.fixtures;
-                appState.bracket = parsed.bracket;
-            }
-        } catch (e) {
-            console.error("Failed to load saved state", e);
+    if (!dbRef) {
+        const saved = localStorage.getItem("fifa2026_simulator_state");
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.fixtures && parsed.bracket) {
+                    appState.fixtures = parsed.fixtures;
+                    appState.bracket = parsed.bracket;
+                }
+            } catch (e) {}
         }
     }
 }
@@ -1126,14 +1149,23 @@ window.addEventListener("DOMContentLoaded", () => {
     initFixtures();
     initStandings();
     
-    // Load local storage predictions if any
-    loadFromLocalStorage();
-    
-    // Perform initial standing computations
-    calculateStandings();
-    
-    // Render
-    renderAll();
+    if (dbRef) {
+        // Use Firebase Realtime Sync
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.fixtures && data.bracket) {
+                appState.fixtures = data.fixtures;
+                appState.bracket = data.bracket;
+            }
+            calculateStandings();
+            renderAll();
+        });
+    } else {
+        // Fallback to local storage
+        loadFromLocalStorage();
+        calculateStandings();
+        renderAll();
+    }
 });
 
 // Interactive Dashboard Stats Card click handler
