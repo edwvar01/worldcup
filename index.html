@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA World Cup 2026 - Hub & Simulator</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Simulate groups and predict the champion of the historic 48-team FIFA World Cup 2026 in USA, Canada, and Mexico. Complete fixtures, team database, and interactive bracket predictor.">
+    <meta name="keywords" content="FIFA World Cup 2026, World Cup Simulator, World Cup Bracket, Fixtures, Groups, Football, Soccer">
+    
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo-area" onclick="switchTab('dashboard')">
+                <i class="fas fa-trophy logo-icon"></i>
+                <div style="display: flex; flex-direction: column;">
+                    <span class="logo-text">WORLD CUP 2026</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">UNITED HUB</span>
+                </div>
+                <span class="logo-tag">48 Teams</span>
+            </a>
+            
+            <!-- Tab Links -->
+            <nav class="nav-links" id="nav-menu-links">
+                <button class="nav-tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </button>
+                <button class="nav-tab" onclick="switchTab('groups')">
+                    <i class="fas fa-th-list"></i> Groups & Standings
+                </button>
+                <button class="nav-tab" onclick="switchTab('fixtures')">
+                    <i class="fas fa-calendar-alt"></i> Match Fixtures
+                </button>
+                <button class="nav-tab" onclick="switchTab('teams')">
+                    <i class="fas fa-flag"></i> Teams Explorer
+                </button>
+                <button class="nav-tab" onclick="switchTab('bracket')">
+                    <i class="fas fa-sitemap"></i> Bracket Predictor
+                </button>
+            </nav>
+            
+            <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Confetti Effects Canvas -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+    <!-- Main Content Area -->
+    <main>
+        
+        <!-- 1. DASHBOARD TAB -->
+        <section id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <!-- Left Main Panel -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    
+                    <!-- Hero Section -->
+                    <div class="hero-card">
+                        <span class="hero-badge">Summer 2026</span>
+                        <h1 class="hero-title">The Tournament of <span>Generations</span></h1>
+                        <p class="hero-desc">
+                            Welcome to the ultimate fan tracker for the <strong>FIFA World Cup 2026</strong>. 
+                            Stretching across Canada, Mexico, and the United States from June 11 to July 19, 2026. 
+                            Simulate match fixtures, rank the top teams, forecast the knockout matches, and crown your world champion!
+                        </p>
+                        
+                        <!-- Hero Countdown -->
+                        <div class="countdown-section" id="countdown-box">
+                            <div class="countdown-label">
+                                <i class="fas fa-hourglass-start animate-spin"></i> Kickoff Countdown
+                            </div>
+                            <div class="countdown-timer">
+                                <div class="time-block">
+                                    <span class="time-num" id="cd-days">00</span>
+                                    <span class="time-lbl">Days</span>
+                                </div>
+                                <div class="time-block">
+                                    <span class="time-num" id="cd-hours">00</span>
+                                    <span class="time-lbl">Hrs</span>
+                                </div>
+                                <div class="time-block">
+                                    <span class="time-num" id="cd-mins">00</span>
+                                    <span class="time-lbl">Mins</span>
+                                </div>
+                                <div class="time-block">
+                                    <span class="time-num" id="cd-secs">00</span>
+                                    <span class="time-lbl">Secs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Stats Rows -->
+                    <div class="stats-row">
+                        <div class="glass-card stat-card" onclick="handleStatClick('teams')" title="View all 48 qualified teams">
+                            <i class="fas fa-users stat-icon"></i>
+                            <div class="stat-value">48</div>
+                            <div class="stat-label">Qualified Teams</div>
+                        </div>
+                        <div class="glass-card stat-card" onclick="handleStatClick('fixtures')" title="View all 104 matches">
+                            <i class="fas fa-futbol stat-icon"></i>
+                            <div class="stat-value">104</div>
+                            <div class="stat-label">Match Fixtures</div>
+                        </div>
+                        <div class="glass-card stat-card" onclick="handleStatClick('hosts')" title="View host nations details">
+                            <i class="fas fa-globe-americas stat-icon"></i>
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Host Nations</div>
+                        </div>
+                        <div class="glass-card stat-card" onclick="handleStatClick('venues')" title="View 16 official host venues">
+                            <i class="fas fa-building stat-icon"></i>
+                            <div class="stat-value">16</div>
+                            <div class="stat-label">Elite Venues</div>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Shortcut Promotion -->
+                    <div class="glass-panel" style="padding: 2rem; display: flex; gap: 1.5rem; align-items: center; border-color: rgba(16,185,129,0.2);">
+                        <i class="fas fa-magic" style="font-size: 3rem; color: var(--primary);"></i>
+                        <div>
+                            <h3 style="font-family: var(--font-heading); margin-bottom: 0.5rem; font-size: 1.3rem;">Predict & Simulate the Tournament</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
+                                Fill in scores or use our intelligent weighted simulator to automatically compute standings and watch teams advance through the knockout brackets.
+                            </p>
+                            <div class="controls-row">
+                                <button class="btn btn-primary" onclick="switchTab('groups')">
+                                    <i class="fas fa-play"></i> Get Started
+                                </button>
+                                <button class="btn" onclick="switchTab('bracket')">
+                                    <i class="fas fa-sitemap"></i> View Bracket
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Sidebar Panel -->
+                <div class="info-sidebar">
+                    <!-- News ticker -->
+                    <div class="glass-panel sidebar-panel">
+                        <h3>Latest Updates</h3>
+                        
+                        <div class="news-item">
+                            <span class="news-tag">Build-up</span>
+                            <h4 class="news-title">Estadio Azteca Ready for Historic Third Opener</h4>
+                            <p class="news-time"><i class="far fa-clock"></i> May 2026</p>
+                        </div>
+                        
+                        <div class="news-item">
+                            <span class="news-tag">Qualification</span>
+                            <h4 class="news-title">Playoff Winners Finalized: Sweden, DR Congo & Iraq Claim Final Spots</h4>
+                            <p class="news-time"><i class="far fa-clock"></i> March 2026</p>
+                        </div>
+                        
+                        <div class="news-item">
+                            <span class="news-tag">Rivalry</span>
+                            <h4 class="news-title">Pochettino Unveils USMNT Pre-Camp Training List in Los Angeles</h4>
+                            <p class="news-time"><i class="far fa-clock"></i> May 2026</p>
+                        </div>
+                    </div>
+
+                    <!-- Stadiums Mini List -->
+                    <div class="glass-panel sidebar-panel">
+                        <h3>Tournament Venues</h3>
+                        <div class="stadium-mini-list">
+                            <div class="stadium-mini-item">
+                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
+                                <div class="stadium-mini-info">
+                                    <h4>Estadio Azteca</h4>
+                                    <p>Mexico City, Mexico (87,523 cap)</p>
+                                </div>
+                            </div>
+                            <div class="stadium-mini-item">
+                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
+                                <div class="stadium-mini-info">
+                                    <h4>MetLife Stadium</h4>
+                                    <p>New York/New Jersey, USA (82,500 cap)</p>
+                                </div>
+                            </div>
+                            <div class="stadium-mini-item">
+                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
+                                <div class="stadium-mini-info">
+                                    <h4>AT&T Stadium</h4>
+                                    <p>Dallas, USA (80,000 cap)</p>
+                                </div>
+                            </div>
+                            <div class="stadium-mini-item">
+                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
+                                <div class="stadium-mini-info">
+                                    <h4>SoFi Stadium</h4>
+                                    <p>Los Angeles, USA (70,240 cap)</p>
+                                </div>
+                            </div>
+                            <div class="stadium-mini-item">
+                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
+                                <div class="stadium-mini-info">
+                                    <h4>BMO Field</h4>
+                                    <p>Toronto, Canada (45,000 cap)</p>
+                                </div>
+                            </div>
+                            <div class="stadium-mini-item">
+                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
+                                <div class="stadium-mini-info">
+                                    <h4>BC Place</h4>
+                                    <p>Vancouver, Canada (54,500 cap)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. GROUPS & SIMULATOR TAB -->
+        <section id="groups" class="tab-content">
+            <div class="groups-header">
+                <div>
+                    <h2 class="section-title">Groups & <span>Standings Simulator</span></h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+                        View all 12 groups. Predict custom scores or auto-simulate standings in real time.
+                    </p>
+                </div>
+                <div class="controls-row">
+                    <button class="btn btn-primary" onclick="simulateAllGroups()">
+                        <i class="fas fa-magic"></i> Simulate All Groups
+                    </button>
+                    <button class="btn" style="color: var(--accent); border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);" onclick="resetAllPredictions()">
+                        <i class="fas fa-undo"></i> Reset All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Group Standings Grid -->
+            <div class="groups-grid" id="groups-grid-container">
+                <!-- Injected dynamically by app.js -->
+            </div>
+        </section>
+
+        <!-- 3. MATCH FIXTURES TAB -->
+        <section id="fixtures" class="tab-content">
+            <div>
+                <h2 class="section-title">Tournament <span>Match Schedule</span></h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem; margin-bottom: 2rem;">
+                    Compute scores directly in the boxes below to dynamically re-calculate stand-alone group tables and bracket configurations.
+                </p>
+            </div>
+
+            <!-- Interactive Filters -->
+            <div class="glass-panel filters-bar">
+                <div class="search-input-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="filter-search" class="search-input" onkeyup="renderFixtures()" placeholder="Search by team (e.g. Argentina, Canada)...">
+                </div>
+                
+                <select id="filter-group" class="select-filter" onchange="renderFixtures()">
+                    <option value="all">All Groups</option>
+                    <option value="A">Group A</option>
+                    <option value="B">Group B</option>
+                    <option value="C">Group C</option>
+                    <option value="D">Group D</option>
+                    <option value="E">Group E</option>
+                    <option value="F">Group F</option>
+                    <option value="G">Group G</option>
+                    <option value="H">Group H</option>
+                    <option value="I">Group I</option>
+                    <option value="J">Group J</option>
+                    <option value="K">Group K</option>
+                    <option value="L">Group L</option>
+                </select>
+
+                <select id="filter-venue" class="select-filter" onchange="renderFixtures()">
+                    <option value="all">All Venues</option>
+                    <option value="Mexico City">Mexico City Stadium</option>
+                    <option value="New York">New Jersey Stadium</option>
+                    <option value="Dallas">Dallas Stadium</option>
+                    <option value="Atlanta">Atlanta Stadium</option>
+                    <option value="Los Angeles">Los Angeles Stadium</option>
+                    <option value="Toronto">Toronto Stadium</option>
+                    <option value="Vancouver">Vancouver Stadium</option>
+                    <option value="Miami">Miami Stadium</option>
+                    <option value="Boston">Boston Stadium</option>
+                    <option value="Kansas City">Kansas City Stadium</option>
+                    <option value="Houston">Houston Stadium</option>
+                    <option value="Philadelphia">Philadelphia Stadium</option>
+                    <option value="San Francisco">San Francisco Stadium</option>
+                    <option value="Seattle">Seattle Stadium</option>
+                </select>
+
+                <select id="filter-stage" class="select-filter" disabled>
+                    <option value="group">Group Stage</option>
+                </select>
+            </div>
+
+            <!-- Match Card Items list -->
+            <div class="matches-list" id="fixtures-list-container">
+                <!-- Injected dynamically by app.js -->
+            </div>
+        </section>
+
+        <!-- 4. TEAMS EXPLORER TAB -->
+        <section id="teams" class="tab-content">
+            <div style="margin-bottom: 2rem;">
+                <h2 class="section-title">Qualified <span>Teams Explorer</span></h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+                    Browse details of the 48 participating countries. Click a team's card to view their roster details, FIFA Rank, and key player.
+                </p>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="glass-panel filters-bar">
+                <div class="search-input-wrap" style="flex: 3;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="team-search" class="search-input" onkeyup="renderTeams()" placeholder="Search team by name or code...">
+                </div>
+                
+                <select id="team-conf-filter" class="select-filter" onchange="renderTeams()">
+                    <option value="all">All Confederations</option>
+                    <option value="UEFA">UEFA (Europe)</option>
+                    <option value="CONMEBOL">CONMEBOL (South America)</option>
+                    <option value="CONCACAF">CONCACAF (North America)</option>
+                    <option value="AFC">AFC (Asia)</option>
+                    <option value="CAF">CAF (Africa)</option>
+                    <option value="OFC">OFC (Oceania)</option>
+                </select>
+            </div>
+
+            <!-- Teams Card Grid -->
+            <div class="teams-grid" id="teams-grid-container">
+                <!-- Injected dynamically by app.js -->
+            </div>
+        </section>
+
+        <!-- 5. BRACKET PREDICTOR TAB -->
+        <section id="bracket" class="tab-content">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 class="section-title">Knockout Phase <span>Bracket Predictor</span></h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance.
+                </p>
+            </div>
+
+            <div class="bracket-wrapper">
+                <p class="bracket-instruction">
+                    👉 <strong>Interactive Bracket:</strong> Click or tap a team card inside a matchup block to instantly **advance** them to the next stage! Select your champion below.
+                </p>
+
+                <!-- Giant celebration display -->
+                <div class="trophy-container" id="champion-display" style="display: none; margin-bottom: 3rem;">
+                    <i class="fas fa-trophy trophy-icon-large"></i>
+                    <h2 style="font-family: var(--font-heading); font-size: 2.2rem; margin: 1rem 0 0.5rem 0; text-shadow: 0 0 10px rgba(245,158,11,0.2);">
+                        Predicted World Champion!
+                    </h2>
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                        <div class="glass-panel champion-spot">
+                            <div class="champion-spot-header">Gold Medalist</div>
+                            <div class="champion-team-display">
+                                <img src="" id="champ-flag-img" class="champion-flag" alt="Champ Flag" onerror="this.src='https://flagcdn.com/w160/gb.png'">
+                                <span id="champ-team-name" class="champion-name">France</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tree Bracket flex grid -->
+                <div class="bracket-container">
+                    
+                    <!-- Column 1: Round of 32 -->
+                    <div class="bracket-col" id="bracket-r32">
+                        <!-- Injected by app.js -->
+                    </div>
+
+                    <!-- Column 2: Round of 16 -->
+                    <div class="bracket-col" id="bracket-r16">
+                        <!-- Injected by app.js -->
+                    </div>
+
+                    <!-- Column 3: Quarterfinals -->
+                    <div class="bracket-col" id="bracket-qf">
+                        <!-- Injected by app.js -->
+                    </div>
+
+                    <!-- Column 4: Semifinals -->
+                    <div class="bracket-col" id="bracket-sf">
+                        <!-- Injected by app.js -->
+                    </div>
+
+                    <!-- Column 5: Grand Final Match -->
+                    <div class="bracket-col" id="bracket-final">
+                        <!-- Injected by app.js -->
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FLOATING POPUP TEAM DETAIL MODAL -->
+    <div id="team-modal" class="modal-overlay">
+        <div class="glass-panel modal-card">
+            <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-header">
+                <img src="" id="modal-flag-img" class="modal-flag" alt="Modal Flag" onerror="this.src='https://flagcdn.com/w160/gb.png'">
+                <div class="modal-title-info">
+                    <h2 id="modal-team-name">Argentina</h2>
+                    <span id="modal-group-lbl" class="modal-group-badge">Group J</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="info-field">
+                    <h4>Confederation</h4>
+                    <p id="modal-conf">CONMEBOL</p>
+                </div>
+                <div class="info-field">
+                    <h4>FIFA Rank</h4>
+                    <p id="modal-rank">#1</p>
+                </div>
+                <div class="info-field" style="grid-column: 1 / -1;">
+                    <h4>Key Star Player</h4>
+                    <p id="modal-player" style="color: var(--primary);">Lionel Messi</p>
+                </div>
+                <div class="info-field" style="grid-column: 1 / -1;">
+                    <h4>Head Coach</h4>
+                    <p id="modal-coach">Lionel Scaloni</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

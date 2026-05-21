@@ -1,0 +1,1177 @@
+// FIFA World Cup 2026 - Hub & Simulator Logic
+
+// 1. Qualified Teams Dataset (48 Teams)
+const TEAMS = {
+    // Group A
+    "MEX": { id: "MEX", name: "Mexico", flag: "mx", conf: "CONCACAF", rank: 15, star: "Santiago Giménez", coach: "Javier Aguirre", group: "A" },
+    "RSA": { id: "RSA", name: "South Africa", flag: "za", conf: "CAF", rank: 59, star: "Percy Tau", coach: "Hugo Broos", group: "A" },
+    "KOR": { id: "KOR", name: "South Korea", flag: "kr", conf: "AFC", rank: 23, star: "Son Heung-min", coach: "Hong Myung-bo", group: "A" },
+    "CZE": { id: "CZE", name: "Czechia", flag: "cz", conf: "UEFA", rank: 36, star: "Patrik Schick", coach: "Ivan Hašek", group: "A" },
+    
+    // Group B
+    "CAN": { id: "CAN", name: "Canada", flag: "ca", conf: "CONCACAF", rank: 49, star: "Alphonso Davies", coach: "Jesse Marsch", group: "B" },
+    "BIH": { id: "BIH", name: "Bosnia & Herzegovina", flag: "ba", conf: "UEFA", rank: 74, star: "Edin Džeko", coach: "Sergej Barbarez", group: "B" },
+    "QAT": { id: "QAT", name: "Qatar", flag: "qa", conf: "AFC", rank: 34, star: "Akram Afif", coach: "Tintín Márquez", group: "B" },
+    "SUI": { id: "SUI", name: "Switzerland", flag: "ch", conf: "UEFA", rank: 19, star: "Granit Xhaka", coach: "Murat Yakin", group: "B" },
+    
+    // Group C
+    "BRA": { id: "BRA", name: "Brazil", flag: "br", conf: "CONMEBOL", rank: 5, star: "Vinícius Júnior", coach: "Dorival Júnior", group: "C" },
+    "MAR": { id: "MAR", name: "Morocco", flag: "ma", conf: "CAF", rank: 13, star: "Achraf Hakimi", coach: "Walid Regragui", group: "C" },
+    "HAI": { id: "HAI", name: "Haiti", flag: "ht", conf: "CONCACAF", rank: 86, star: "Duckens Nazon", coach: "Sébastien Migné", group: "C" },
+    "SCO": { id: "SCO", name: "Scotland", flag: "gb-sct", conf: "UEFA", rank: 39, star: "Scott McTominay", coach: "Steve Clarke", group: "C" },
+    
+    // Group D
+    "USA": { id: "USA", name: "United States", flag: "us", conf: "CONCACAF", rank: 11, star: "Christian Pulisic", coach: "Mauricio Pochettino", group: "D" },
+    "PAR": { id: "PAR", name: "Paraguay", flag: "py", conf: "CONMEBOL", rank: 56, star: "Miguel Almirón", coach: "Gustavo Alfaro", group: "D" },
+    "AUS": { id: "AUS", name: "Australia", flag: "au", conf: "AFC", rank: 24, star: "Jackson Irvine", coach: "Tony Popovic", group: "D" },
+    "TUR": { id: "TUR", name: "Türkiye", flag: "tr", conf: "UEFA", rank: 26, star: "Hakan Çalhanoğlu", coach: "Vincenzo Montella", group: "D" },
+    
+    // Group E
+    "GER": { id: "GER", name: "Germany", flag: "de", conf: "UEFA", rank: 16, star: "Florian Wirtz", coach: "Julian Nagelsmann", group: "E" },
+    "CUW": { id: "CUW", name: "Curaçao", flag: "cw", conf: "CONCACAF", rank: 90, star: "Juninho Bacuna", coach: "Dick Advocaat", group: "E" },
+    "CIV": { id: "CIV", name: "Côte d'Ivoire", flag: "ci", conf: "CAF", rank: 38, star: "Franck Kessié", coach: "Emerse Faé", group: "E" },
+    "ECU": { id: "ECU", name: "Ecuador", flag: "ec", conf: "CONMEBOL", rank: 31, star: "Piero Hincapié", coach: "Sebastián Beccacece", group: "E" },
+    
+    // Group F
+    "NED": { id: "NED", name: "Netherlands", flag: "nl", conf: "UEFA", rank: 7, star: "Virgil van Dijk", coach: "Ronald Koeman", group: "F" },
+    "JPN": { id: "JPN", name: "Japan", flag: "jp", conf: "AFC", rank: 18, star: "Kaoru Mitoma", coach: "Hajime Moriyasu", group: "F" },
+    "SWE": { id: "SWE", name: "Sweden", flag: "se", conf: "UEFA", rank: 28, star: "Viktor Gyökeres", coach: "Jon Dahl Tomasson", group: "F" },
+    "TUN": { id: "TUN", name: "Tunisia", flag: "tn", conf: "CAF", rank: 41, star: "Ellyes Skhiri", coach: "Faouzi Benzarti", group: "F" },
+    
+    // Group G
+    "BEL": { id: "BEL", name: "Belgium", flag: "be", conf: "UEFA", rank: 6, star: "Kevin De Bruyne", coach: "Domenico Tedesco", group: "G" },
+    "EGY": { id: "EGY", name: "Egypt", flag: "eg", conf: "CAF", rank: 30, star: "Mohamed Salah", coach: "Hossam Hassan", group: "G" },
+    "IRN": { id: "IRN", name: "IR Iran", flag: "ir", conf: "AFC", rank: 20, star: "Mehdi Taremi", coach: "Amir Ghalenoei", group: "G" },
+    "NZL": { id: "NZL", name: "New Zealand", flag: "nz", conf: "OFC", rank: 107, star: "Chris Wood", coach: "Darren Bazeley", group: "G" },
+    
+    // Group H
+    "ESP": { id: "ESP", name: "Spain", flag: "es", conf: "UEFA", rank: 3, star: "Lamine Yamal", coach: "Luis de la Fuente", group: "H" },
+    "CPV": { id: "CPV", name: "Cabo Verde", flag: "cv", conf: "CAF", rank: 65, star: "Ryan Mendes", coach: "Bubista", group: "H" },
+    "KSA": { id: "KSA", name: "Saudi Arabia", flag: "sa", conf: "AFC", rank: 53, star: "Salem Al-Dawsari", coach: "Roberto Mancini", group: "H" },
+    "URU": { id: "URU", name: "Uruguay", flag: "uy", conf: "CONMEBOL", rank: 14, star: "Federico Valverde", coach: "Marcelo Bielsa", group: "H" },
+    
+    // Group I
+    "FRA": { id: "FRA", name: "France", flag: "fr", conf: "UEFA", rank: 2, star: "Kylian Mbappé", coach: "Didier Deschamps", group: "I" },
+    "SEN": { id: "SEN", name: "Senegal", flag: "sn", conf: "CAF", rank: 21, star: "Sadio Mané", coach: "Pape Thiaw", group: "I" },
+    "IRQ": { id: "IRQ", name: "Iraq", flag: "iq", conf: "AFC", rank: 58, star: "Aymen Hussein", coach: "Jesús Casas", group: "I" },
+    "NOR": { id: "NOR", name: "Norway", flag: "no", conf: "UEFA", rank: 47, star: "Erling Haaland", coach: "Ståle Solbakken", group: "I" },
+    
+    // Group J
+    "ARG": { id: "ARG", name: "Argentina", flag: "ar", conf: "CONMEBOL", rank: 1, star: "Lionel Messi", coach: "Lionel Scaloni", group: "J" },
+    "ALG": { id: "ALG", name: "Algeria", flag: "dz", conf: "CAF", rank: 46, star: "Riyad Mahrez", coach: "Vladimir Petković", group: "J" },
+    "AUT": { id: "AUT", name: "Austria", flag: "at", conf: "UEFA", rank: 22, star: "Marcel Sabitzer", coach: "Ralf Rangnick", group: "J" },
+    "JOR": { id: "JOR", name: "Jordan", flag: "jo", conf: "AFC", rank: 71, star: "Musa Al-Taamari", coach: "Jamal Sellami", group: "J" },
+    
+    // Group K
+    "POR": { id: "POR", name: "Portugal", flag: "pt", conf: "UEFA", rank: 8, star: "Cristiano Ronaldo", coach: "Roberto Martínez", group: "K" },
+    "COD": { id: "COD", name: "DR Congo", flag: "cd", conf: "CAF", rank: 60, star: "Chancel Mbemba", coach: "Sébastien Desabre", group: "K" },
+    "UZB": { id: "UZB", name: "Uzbekistan", flag: "uz", conf: "AFC", rank: 66, star: "Eldor Shomurodov", coach: "Srečko Katanec", group: "K" },
+    "COL": { id: "COL", name: "Colombia", flag: "co", conf: "CONMEBOL", rank: 9, star: "Luis Díaz", coach: "Néstor Lorenzo", group: "K" },
+    
+    // Group L
+    "ENG": { id: "ENG", name: "England", flag: "gb-eng", conf: "UEFA", rank: 4, star: "Jude Bellingham", coach: "Thomas Tuchel", group: "L" },
+    "CRO": { id: "CRO", name: "Croatia", flag: "hr", conf: "UEFA", rank: 12, star: "Luka Modrić", coach: "Zlatko Dalić", group: "L" },
+    "GHA": { id: "GHA", name: "Ghana", flag: "gh", conf: "CAF", rank: 64, star: "Mohammed Kudus", coach: "Otto Addo", group: "L" },
+    "PAN": { id: "PAN", name: "Panama", flag: "pa", conf: "CONCACAF", rank: 35, star: "Adalberto Carrasquilla", coach: "Thomas Christiansen", group: "L" }
+};
+
+// 16 Official Stadiums & Cities
+const STADIUMS = [
+    { name: "Estadio Azteca", city: "Mexico City", country: "MEX", cap: 87523 },
+    { name: "MetLife Stadium", city: "New York/New Jersey", country: "USA", cap: 82500 },
+    { name: "AT&T Stadium", city: "Dallas", country: "USA", cap: 80000 },
+    { name: "Mercedes-Benz Stadium", city: "Atlanta", country: "USA", cap: 71000 },
+    { name: "SoFi Stadium", city: "Los Angeles", country: "USA", cap: 70240 },
+    { name: "BC Place", city: "Vancouver", country: "CAN", cap: 54500 },
+    { name: "BMO Field", city: "Toronto", country: "CAN", cap: 45000 },
+    { name: "Estadio BBVA", city: "Monterrey", country: "MEX", cap: 53500 },
+    { name: "Estadio Akron", city: "Guadalajara", country: "MEX", cap: 48070 },
+    { name: "Hard Rock Stadium", city: "Miami", country: "USA", cap: 64767 },
+    { name: "Gillette Stadium", city: "Boston", country: "USA", cap: 65878 },
+    { name: "Arrowhead Stadium", city: "Kansas City", country: "USA", cap: 76416 },
+    { name: "NRG Stadium", city: "Houston", country: "USA", cap: 72220 },
+    { name: "Lincoln Financial Field", city: "Philadelphia", country: "USA", cap: 69796 },
+    { name: "Levi's Stadium", city: "San Francisco", country: "USA", cap: 68500 },
+    { name: "Lumen Field", city: "Seattle", country: "USA", cap: 69000 }
+];
+
+// App State
+let appState = {
+    fixtures: [],
+    standings: {},
+    best3rd: [],
+    bracket: {
+        r32: Array(16).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        r16: Array(8).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        qf: Array(4).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        sf: Array(2).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        final: { home: null, away: null, winner: null }
+    },
+    hostFilterOnly: false
+};
+
+// 2. Generate Group Fixtures (72 matches total)
+function initFixtures() {
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    const matchDates = [
+        ["2026-06-11", "2026-06-12"], // Rd 1
+        ["2026-06-17", "2026-06-18"], // Rd 2
+        ["2026-06-24", "2026-06-25"]  // Rd 3
+    ];
+    let matchCounter = 1;
+
+    groups.forEach((g, gIdx) => {
+        const groupTeams = Object.values(TEAMS).filter(t => t.group === g);
+        
+        // Custom Opening Stadium assignments to match official details
+        let stadium1 = STADIUMS[gIdx % STADIUMS.length];
+        let stadium2 = STADIUMS[(gIdx + 4) % STADIUMS.length];
+
+        if (g === "A") {
+            stadium1 = STADIUMS.find(s => s.name === "Estadio Azteca"); // Mexico City
+        } else if (g === "B") {
+            stadium1 = STADIUMS.find(s => s.name === "BMO Field"); // Toronto Stadium
+        } else if (g === "D") {
+            stadium1 = STADIUMS.find(s => s.name === "SoFi Stadium"); // LA Stadium
+        }
+
+        // T1, T2, T3, T4 based on team IDs alphabetically inside group
+        const [t1, t2, t3, t4] = groupTeams;
+
+        const roundMatches = [
+            // Rd 1
+            { home: t1, away: t2, date: g === "A" ? "2026-06-11" : (g === "B" || g === "D") ? "2026-06-12" : matchDates[0][0], venue: stadium1 },
+            { home: t3, away: t4, date: matchDates[0][1], venue: stadium2 },
+            // Rd 2
+            { home: t1, away: t3, date: matchDates[1][0], venue: stadium2 },
+            { home: t2, away: t4, date: matchDates[1][1], venue: stadium1 },
+            // Rd 3
+            { home: t4, away: t1, date: matchDates[2][0], venue: stadium1 },
+            { home: t2, away: t3, date: matchDates[2][1], venue: stadium2 }
+        ];
+
+        roundMatches.forEach((m, rIdx) => {
+            appState.fixtures.push({
+                id: matchCounter++,
+                group: g,
+                round: Math.floor(rIdx / 2) + 1,
+                home: m.home.id,
+                away: m.away.id,
+                homeScore: null,
+                awayScore: null,
+                date: m.date,
+                venue: m.venue.name + " (" + m.venue.city + ")"
+            });
+        });
+    });
+}
+
+// 3. Initialize Standings structure
+function initStandings() {
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    groups.forEach(g => {
+        const groupTeams = Object.values(TEAMS).filter(t => t.group === g);
+        appState.standings[g] = groupTeams.map(t => ({
+            id: t.id,
+            name: t.name,
+            flag: t.flag,
+            mp: 0, w: 0, d: 0, l: 0,
+            gf: 0, ga: 0, gd: 0,
+            pts: 0
+        }));
+    });
+}
+
+// 4. Standings calculations engine
+function calculateStandings() {
+    // Reset all
+    initStandings();
+
+    // Loop through matches
+    appState.fixtures.forEach(m => {
+        if (m.homeScore !== null && m.awayScore !== null) {
+            const hs = parseInt(m.homeScore);
+            const as = parseInt(m.awayScore);
+            const group = m.group;
+            
+            const homeStanding = appState.standings[group].find(t => t.id === m.home);
+            const awayStanding = appState.standings[group].find(t => t.id === m.away);
+
+            if (homeStanding && awayStanding) {
+                homeStanding.mp += 1;
+                awayStanding.mp += 1;
+                homeStanding.gf += hs;
+                homeStanding.ga += as;
+                awayStanding.gf += as;
+                awayStanding.ga += hs;
+
+                if (hs > as) {
+                    homeStanding.w += 1;
+                    homeStanding.pts += 3;
+                    awayStanding.l += 1;
+                } else if (hs < as) {
+                    awayStanding.w += 1;
+                    awayStanding.pts += 3;
+                    homeStanding.l += 1;
+                } else {
+                    homeStanding.d += 1;
+                    homeStanding.pts += 1;
+                    awayStanding.d += 1;
+                    awayStanding.pts += 1;
+                }
+
+                homeStanding.gd = homeStanding.gf - homeStanding.ga;
+                awayStanding.gd = awayStanding.gf - awayStanding.ga;
+            }
+        }
+    });
+
+    // Sort groups
+    const groups = Object.keys(appState.standings);
+    groups.forEach(g => {
+        appState.standings[g].sort((a, b) => {
+            if (b.pts !== a.pts) return b.pts - a.pts;
+            if (b.gd !== a.gd) return b.gd - a.gd;
+            if (b.gf !== a.gf) return b.gf - a.gf;
+            // Fallback: FIFA Rank (lower number is higher/better)
+            const teamA = TEAMS[a.id];
+            const teamB = TEAMS[b.id];
+            return teamA.rank - teamB.rank;
+        });
+    });
+
+    // Calculate Best 3rd place teams
+    calculateBest3rdPlaces();
+
+    // Auto-seed Knockout Round of 32
+    seedRoundOf32();
+}
+
+// Ranks all 12 third-placed teams to find the top 8 advancing
+function calculateBest3rdPlaces() {
+    const thirdPlaced = [];
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    
+    groups.forEach(g => {
+        const thirdTeam = appState.standings[g][2]; // index 2 is 3rd place
+        if (thirdTeam) {
+            thirdPlaced.push({
+                ...thirdTeam,
+                group: g
+            });
+        }
+    });
+
+    // Sort third place table
+    thirdPlaced.sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts;
+        if (b.gd !== a.gd) return b.gd - a.gd;
+        if (b.gf !== a.gf) return b.gf - a.gf;
+        const teamA = TEAMS[a.id];
+        const teamB = TEAMS[b.id];
+        return teamA.rank - teamB.rank;
+    });
+
+    appState.best3rd = thirdPlaced;
+}
+
+// 5. Knockout Seeding Engine
+function seedRoundOf32() {
+    const standings = appState.standings;
+    const best3rd = appState.best3rd.slice(0, 8); // Top 8 3rd-placed teams
+
+    const top1 = {};
+    const top2 = {};
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    
+    groups.forEach(g => {
+        top1[g] = standings[g][0].id;
+        top2[g] = standings[g][1].id;
+    });
+
+    // Pairings formula to feed Round of 32 (16 Matches)
+    // Dynamic pairing rules ensuring no duplicate assignments or team overlaps:
+    // Slot 1-8: Group leaders (1A - 1H) vs Top 8 Best 3rd places
+    // Slot 9-12: Remaining Group leaders (1I - 1L) vs runners-up (2A - 2D)
+    // Slot 13-16: Remaining runners-up in pairs (2E vs 2F, 2G vs 2H, 2I vs 2J, 2K vs 2L)
+    
+    const matchesMap = [
+        { home: top1["A"], away: best3rd[0] ? best3rd[0].id : null },
+        { home: top2["E"], away: top2["F"] },
+        { home: top1["C"], away: best3rd[1] ? best3rd[1].id : null },
+        { home: top2["G"], away: top2["H"] },
+        
+        { home: top1["E"], away: best3rd[2] ? best3rd[2].id : null },
+        { home: top2["I"], away: top2["J"] },
+        { home: top1["G"], away: best3rd[3] ? best3rd[3].id : null },
+        { home: top2["K"], away: top2["L"] },
+
+        { home: top1["B"], away: best3rd[4] ? best3rd[4].id : null },
+        { home: top1["I"], away: top2["A"] },
+        { home: top1["D"], away: best3rd[5] ? best3rd[5].id : null },
+        { home: top1["J"], away: top2["B"] },
+
+        { home: top1["F"], away: best3rd[6] ? best3rd[6].id : null },
+        { home: top1["K"], away: top2["C"] },
+        { home: top1["H"], away: best3rd[7] ? best3rd[7].id : null },
+        { home: top1["L"], away: top2["D"] }
+    ];
+
+    matchesMap.forEach((m, idx) => {
+        // Only override if user hasn't actively predicted the matchup winner yet
+        // or if the underlying seeded teams changed, we reset it
+        const currentMatch = appState.bracket.r32[idx];
+        if (currentMatch.home !== m.home || currentMatch.away !== m.away) {
+            currentMatch.home = m.home;
+            currentMatch.away = m.away;
+            currentMatch.winner = null; // Reset winner on seeding changes
+        }
+    });
+
+    // Synchronize rest of bracket
+    syncBracketProgression();
+}
+
+// Keep the progression stages synced up beautifully!
+function syncBracketProgression() {
+    const bracket = appState.bracket;
+
+    // R32 -> R16
+    for (let i = 0; i < 8; i++) {
+        const m1 = bracket.r32[i * 2];
+        const m2 = bracket.r32[i * 2 + 1];
+        
+        const nextMatch = bracket.r16[i];
+        const prevHome = m1.winner;
+        const prevAway = m2.winner;
+
+        if (nextMatch.home !== prevHome || nextMatch.away !== prevAway) {
+            nextMatch.home = prevHome;
+            nextMatch.away = prevAway;
+            nextMatch.winner = null; // Reset winner
+        }
+    }
+
+    // R16 -> Quarterfinals
+    for (let i = 0; i < 4; i++) {
+        const m1 = bracket.r16[i * 2];
+        const m2 = bracket.r16[i * 2 + 1];
+        
+        const nextMatch = bracket.qf[i];
+        const prevHome = m1.winner;
+        const prevAway = m2.winner;
+
+        if (nextMatch.home !== prevHome || nextMatch.away !== prevAway) {
+            nextMatch.home = prevHome;
+            nextMatch.away = prevAway;
+            nextMatch.winner = null;
+        }
+    }
+
+    // Quarterfinals -> Semifinals
+    for (let i = 0; i < 2; i++) {
+        const m1 = bracket.qf[i * 2];
+        const m2 = bracket.qf[i * 2 + 1];
+        
+        const nextMatch = bracket.sf[i];
+        const prevHome = m1.winner;
+        const prevAway = m2.winner;
+
+        if (nextMatch.home !== prevHome || nextMatch.away !== prevAway) {
+            nextMatch.home = prevHome;
+            nextMatch.away = prevAway;
+            nextMatch.winner = null;
+        }
+    }
+
+    // Semifinals -> Final
+    const sf1 = bracket.sf[0];
+    const sf2 = bracket.sf[1];
+    const final = bracket.final;
+    const finalHome = sf1.winner;
+    const finalAway = sf2.winner;
+
+    if (final.home !== finalHome || final.away !== finalAway) {
+        final.home = finalHome;
+        final.away = finalAway;
+        final.winner = null;
+    }
+}
+
+// 6. Interactive Prediction Advance Handler
+function advanceTeam(round, matchIndex, teamId) {
+    if (!teamId) return;
+    
+    if (round === "r32") {
+        appState.bracket.r32[matchIndex].winner = teamId;
+    } else if (round === "r16") {
+        appState.bracket.r16[matchIndex].winner = teamId;
+    } else if (round === "qf") {
+        appState.bracket.qf[matchIndex].winner = teamId;
+    } else if (round === "sf") {
+        appState.bracket.sf[matchIndex].winner = teamId;
+    } else if (round === "final") {
+        appState.bracket.final.winner = teamId;
+        
+        // Celebrate Champion!
+        triggerCelebration(teamId);
+    }
+
+    syncBracketProgression();
+    saveToLocalStorage();
+    renderBracket();
+}
+
+// Smart Soccer Match Simulator (Poisson/Custom realistic distribution)
+// average goals is 1.5, slightly skewed based on FIFA Rank differential
+function generateRealisticScore(teamARank, teamBRank) {
+    // Rank differential
+    const diff = teamBRank - teamARank; // positive means A is stronger (lower rank number)
+    
+    // Average base lambdas (expected goals)
+    let lambdaA = 1.35 + (diff * 0.006);
+    let lambdaB = 1.35 - (diff * 0.006);
+    
+    // Limits
+    lambdaA = Math.max(0.4, Math.min(3.2, lambdaA));
+    lambdaB = Math.max(0.4, Math.min(3.2, lambdaB));
+
+    // Simple Poisson approximation
+    const getPoisson = (lambda) => {
+        let L = Math.exp(-lambda);
+        let k = 0;
+        let p = 1.0;
+        do {
+            k++;
+            p *= Math.random();
+        } while (p > L);
+        return k - 1;
+    };
+
+    let scoreA = getPoisson(lambdaA);
+    let scoreB = getPoisson(lambdaB);
+
+    // Limit extreme outliers
+    scoreA = Math.min(scoreA, 7);
+    scoreB = Math.min(scoreB, 7);
+
+    return { home: scoreA, away: scoreB };
+}
+
+// Simulate Single Group
+function simulateGroup(groupLetter) {
+    const groupMatches = appState.fixtures.filter(m => m.group === groupLetter);
+    groupMatches.forEach(m => {
+        const teamA = TEAMS[m.home];
+        const teamB = TEAMS[m.away];
+        
+        const score = generateRealisticScore(teamA.rank, teamB.rank);
+        m.homeScore = score.home;
+        m.awayScore = score.away;
+    });
+
+    calculateStandings();
+    saveToLocalStorage();
+    renderAll();
+}
+
+// Simulate All Groups Stage
+function simulateAllGroups() {
+    appState.fixtures.forEach(m => {
+        const teamA = TEAMS[m.home];
+        const teamB = TEAMS[m.away];
+        
+        const score = generateRealisticScore(teamA.rank, teamB.rank);
+        m.homeScore = score.home;
+        m.awayScore = score.away;
+    });
+
+    calculateStandings();
+    saveToLocalStorage();
+    renderAll();
+}
+
+// Reset predictions
+function resetAllPredictions() {
+    appState.fixtures.forEach(m => {
+        m.homeScore = null;
+        m.awayScore = null;
+    });
+
+    // Reset bracket fully
+    appState.bracket = {
+        r32: Array(16).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        r16: Array(8).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        qf: Array(4).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        sf: Array(2).fill(null).map(() => ({ home: null, away: null, winner: null })),
+        final: { home: null, away: null, winner: null }
+    };
+
+    calculateStandings();
+    saveToLocalStorage();
+    renderAll();
+    
+    // Hide champion display
+    document.getElementById("champion-display").style.display = "none";
+}
+
+// Local Storage Management
+function saveToLocalStorage() {
+    localStorage.setItem("fifa2026_simulator_state", JSON.stringify({
+        fixtures: appState.fixtures,
+        bracket: appState.bracket
+    }));
+}
+
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem("fifa2026_simulator_state");
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            // Verify structure matches
+            if (parsed.fixtures && parsed.bracket) {
+                appState.fixtures = parsed.fixtures;
+                appState.bracket = parsed.bracket;
+            }
+        } catch (e) {
+            console.error("Failed to load saved state", e);
+        }
+    }
+}
+
+// 7. Render UI Functions
+function renderAll() {
+    renderCountdown();
+    renderGroups();
+    renderFixtures();
+    renderTeams();
+    renderBracket();
+}
+
+// Countdown timer renderer
+function renderCountdown() {
+    // June 11, 2026 15:00:00 (Local/Opening ceremony)
+    const openingDate = new Date("2026-06-11T15:00:00").getTime();
+    
+    const updateCountdown = () => {
+        const now = new Date().getTime();
+        const diff = openingDate - now;
+        
+        const daysEl = document.getElementById("cd-days");
+        const hoursEl = document.getElementById("cd-hours");
+        const minsEl = document.getElementById("cd-mins");
+        const secsEl = document.getElementById("cd-secs");
+
+        if (!daysEl) return;
+
+        if (diff <= 0) {
+            document.getElementById("countdown-box").innerHTML = `
+                <div class="hero-badge" style="background: var(--primary);">Tournament Live!</div>
+                <div class="countdown-label">⚽ FIFA World Cup 2026 is underway!</div>
+            `;
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        daysEl.innerText = String(days).padStart(2, '0');
+        hoursEl.innerText = String(hours).padStart(2, '0');
+        minsEl.innerText = String(mins).padStart(2, '0');
+        secsEl.innerText = String(secs).padStart(2, '0');
+    };
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+// Groups tab renderer
+function renderGroups() {
+    const container = document.getElementById("groups-grid-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+
+    groups.forEach(g => {
+        const groupCard = document.createElement("div");
+        groupCard.className = "glass-card group-card";
+        
+        const gStandings = appState.standings[g];
+
+        let rowsHtml = "";
+        gStandings.forEach((t, idx) => {
+            const isTop2 = idx < 2;
+            const is3rd = idx === 2;
+            const rowClass = isTop2 ? "advancing-top2" : is3rd ? "advancing-3rd" : "";
+            
+            rowsHtml += `
+                <tr class="${rowClass}">
+                    <td class="td-num" style="color: var(--text-muted); font-weight: bold;">${idx + 1}</td>
+                    <td class="td-team">
+                        <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
+                        <span>${t.name}</span>
+                    </td>
+                    <td class="td-num">${t.mp}</td>
+                    <td class="td-num" style="font-weight: bold;">${t.pts}</td>
+                    <td class="td-num">${t.w}</td>
+                    <td class="td-num">${t.d}</td>
+                    <td class="td-num">${t.l}</td>
+                    <td class="td-num">${t.gd >= 0 ? '+' + t.gd : t.gd}</td>
+                </tr>
+            `;
+        });
+
+        groupCard.innerHTML = `
+            <div class="group-card-header">
+                <span class="group-name">Group ${g}</span>
+                <button class="btn-simulate-mini" onclick="simulateGroup('${g}')">
+                    <i class="fas fa-magic"></i> Simulate
+                </button>
+            </div>
+            <table class="standings-table">
+                <thead>
+                    <tr>
+                        <th class="th-num">#</th>
+                        <th>Team</th>
+                        <th class="th-num">MP</th>
+                        <th class="th-num">PTS</th>
+                        <th class="th-num">W</th>
+                        <th class="th-num">D</th>
+                        <th class="th-num">L</th>
+                        <th class="th-num">GD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHtml}
+                </tbody>
+            </table>
+        `;
+
+        container.appendChild(groupCard);
+    });
+}
+
+// Matches & Fixtures renderer
+function renderFixtures() {
+    const listContainer = document.getElementById("fixtures-list-container");
+    if (!listContainer) return;
+
+    // Get current filters
+    const searchVal = document.getElementById("filter-search").value.toLowerCase();
+    const stageVal = document.getElementById("filter-stage").value;
+    const venueVal = document.getElementById("filter-venue").value;
+    const groupVal = document.getElementById("filter-group").value;
+
+    listContainer.innerHTML = "";
+    
+    // Filter matches
+    const filteredMatches = appState.fixtures.filter(m => {
+        const teamA = TEAMS[m.home];
+        const teamB = TEAMS[m.away];
+        
+        // Search by team name
+        const matchesSearch = teamA.name.toLowerCase().includes(searchVal) || 
+                              teamB.name.toLowerCase().includes(searchVal);
+        
+        // Filter by Group
+        const matchesGroup = groupVal === "all" || m.group === groupVal;
+        
+        // Filter by Venue
+        const matchesVenue = venueVal === "all" || m.venue.includes(venueVal);
+
+        return matchesSearch && matchesGroup && matchesVenue;
+    });
+
+    if (filteredMatches.length === 0) {
+        listContainer.innerHTML = `
+            <div class="glass-card" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+                <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                <p>No fixtures match your selected filters. Try broadening your criteria.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredMatches.forEach(m => {
+        const teamA = TEAMS[m.home];
+        const teamB = TEAMS[m.away];
+        
+        const card = document.createElement("div");
+        card.className = "glass-card match-card";
+
+        const formattedDate = new Date(m.date).toLocaleDateString("en-US", {
+            weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+        });
+
+        const isSaved = m.homeScore !== null && m.awayScore !== null;
+
+        card.innerHTML = `
+            <div class="match-info-left">
+                <span class="match-number">Match #${m.id}</span>
+                <span class="match-group-lbl">Group ${m.group} - Round ${m.round}</span>
+                <span class="match-meta-info">${formattedDate}</span>
+                <span class="match-meta-info" style="font-style: italic;"><i class="fas fa-map-marker-alt"></i> ${m.venue}</span>
+            </div>
+            
+            <div class="match-vs-area">
+                <div class="match-team team-a">
+                    <span class="match-team-name">${teamA.name}</span>
+                    <img src="https://flagcdn.com/w40/${teamA.flag}.png" alt="${teamA.name}" class="match-team-flag" onerror="this.src='https://flagcdn.com/w40/gb.png'">
+                </div>
+                
+                <div class="match-score-inputs">
+                    <input type="number" min="0" max="20" class="score-input" value="${m.homeScore !== null ? m.homeScore : ''}" 
+                        onchange="updateMatchScore(${m.id}, 'home', this.value)" placeholder="-">
+                    <span class="score-dash">:</span>
+                    <input type="number" min="0" max="20" class="score-input" value="${m.awayScore !== null ? m.awayScore : ''}" 
+                        onchange="updateMatchScore(${m.id}, 'away', this.value)" placeholder="-">
+                </div>
+                
+                <div class="match-team team-b">
+                    <img src="https://flagcdn.com/w40/${teamB.flag}.png" alt="${teamB.name}" class="match-team-flag" onerror="this.src='https://flagcdn.com/w40/gb.png'">
+                    <span class="match-team-name">${teamB.name}</span>
+                </div>
+            </div>
+            
+            <div class="match-action-area">
+                <button class="btn-action-mini ${isSaved ? 'saved' : ''}" onclick="quickSimMatch(${m.id})" title="Simulate match score">
+                    <i class="fas fa-dice"></i>
+                </button>
+            </div>
+        `;
+
+        listContainer.appendChild(card);
+    });
+}
+
+// Inline score updater
+function updateMatchScore(matchId, side, value) {
+    const match = appState.fixtures.find(m => m.id === matchId);
+    if (!match) return;
+
+    if (value === "") {
+        if (side === "home") match.homeScore = null;
+        else match.awayScore = null;
+    } else {
+        const score = Math.max(0, parseInt(value));
+        if (side === "home") match.homeScore = score;
+        else match.awayScore = score;
+    }
+
+    calculateStandings();
+    saveToLocalStorage();
+    
+    // Re-render group tables and bracket seamlessly
+    renderGroups();
+    renderBracket();
+    
+    // Toggle active saved class visual representation
+    renderFixtures();
+}
+
+// Quick simulate single match via dice icon
+function quickSimMatch(matchId) {
+    const match = appState.fixtures.find(m => m.id === matchId);
+    if (!match) return;
+
+    const teamA = TEAMS[match.home];
+    const teamB = TEAMS[match.away];
+
+    const score = generateRealisticScore(teamA.rank, teamB.rank);
+    match.homeScore = score.home;
+    match.awayScore = score.away;
+
+    calculateStandings();
+    saveToLocalStorage();
+    renderGroups();
+    renderFixtures();
+    renderBracket();
+}
+
+// Teams tab explorer renderer
+function renderTeams() {
+    const grid = document.getElementById("teams-grid-container");
+    if (!grid) return;
+
+    const searchVal = document.getElementById("team-search").value.toLowerCase();
+    const confVal = document.getElementById("team-conf-filter").value;
+
+    // Reset host filter if manual search/filters are applied by user
+    if (searchVal !== "" || confVal !== "all") {
+        appState.hostFilterOnly = false;
+    }
+
+    grid.innerHTML = "";
+
+    const filtered = Object.values(TEAMS).filter(t => {
+        // If hostFilterOnly is active, show only USA, CAN, MEX
+        if (appState.hostFilterOnly && !(t.id === 'USA' || t.id === 'CAN' || t.id === 'MEX')) {
+            return false;
+        }
+        const matchesSearch = t.name.toLowerCase().includes(searchVal) || 
+                              t.id.toLowerCase().includes(searchVal);
+        const matchesConf = confVal === "all" || t.conf === confVal;
+        return matchesSearch && matchesConf;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="glass-card" style="padding: 3rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+                <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                <p>No teams match your search details.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtered.forEach(t => {
+        const card = document.createElement("div");
+        card.className = "glass-card team-card";
+        card.onclick = () => showTeamDetails(t.id);
+
+        card.innerHTML = `
+            <img src="https://flagcdn.com/w80/${t.flag}.png" alt="${t.name}" class="team-card-flag" onerror="this.src='https://flagcdn.com/w80/gb.png'">
+            <h3 class="team-card-name">${t.name}</h3>
+            <span class="team-card-conf">${t.conf}</span>
+            <div class="team-card-stats">
+                <div class="team-stat-item">
+                    <span>Rank</span>
+                    <strong>#${t.rank}</strong>
+                </div>
+                <div class="team-stat-item">
+                    <span>Group</span>
+                    <strong>${t.group}</strong>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// Team detailed Modal displayer
+function showTeamDetails(teamId) {
+    const t = TEAMS[teamId];
+    const modal = document.getElementById("team-modal");
+    if (!t || !modal) return;
+
+    document.getElementById("modal-flag-img").src = `https://flagcdn.com/w160/${t.flag}.png`;
+    document.getElementById("modal-team-name").innerText = t.name;
+    document.getElementById("modal-group-lbl").innerText = `Group ${t.group}`;
+    document.getElementById("modal-rank").innerText = `#${t.rank}`;
+    document.getElementById("modal-conf").innerText = t.conf;
+    document.getElementById("modal-player").innerText = t.star;
+    document.getElementById("modal-coach").innerText = t.coach;
+
+    modal.classList.add("active");
+}
+
+function closeModal() {
+    const modal = document.getElementById("team-modal");
+    if (modal) modal.classList.remove("active");
+}
+
+// Knockout Bracket visualizer
+function renderBracket() {
+    const r32Col = document.getElementById("bracket-r32");
+    const r16Col = document.getElementById("bracket-r16");
+    const qfCol = document.getElementById("bracket-qf");
+    const sfCol = document.getElementById("bracket-sf");
+    const finalCol = document.getElementById("bracket-final");
+
+    if (!r32Col) return;
+
+    const bracket = appState.bracket;
+
+    // Helper to generate a team slot HTML
+    const getSlotHtml = (teamId, opponentId, isWinner, isLoser) => {
+        if (!teamId) {
+            return `<div class="bracket-team-slot empty">TBD</div>`;
+        }
+        const t = TEAMS[teamId];
+        let slotClass = "bracket-team-slot";
+        if (isWinner) slotClass += " winner";
+        if (isLoser) slotClass += " loser";
+
+        return `
+            <div class="${slotClass}">
+                <div class="bracket-team-info">
+                    <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
+                    <span>${t.name}</span>
+                </div>
+                <span class="advance-arrow"><i class="fas fa-chevron-right"></i></span>
+            </div>
+        `;
+    };
+
+    // Render Round of 32
+    r32Col.innerHTML = `<div class="bracket-col-header">Round of 32</div><div class="bracket-matchups"></div>`;
+    const r32Matchups = r32Col.querySelector(".bracket-matchups");
+    bracket.r32.forEach((m, idx) => {
+        const card = document.createElement("div");
+        card.className = "bracket-matchup-card";
+        
+        const homeSlot = document.createElement("div");
+        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
+        if (m.home) homeSlot.onclick = () => advanceTeam("r32", idx, m.home);
+
+        const awaySlot = document.createElement("div");
+        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
+        if (m.away) awaySlot.onclick = () => advanceTeam("r32", idx, m.away);
+
+        card.appendChild(homeSlot);
+        card.appendChild(awaySlot);
+        r32Matchups.appendChild(card);
+    });
+
+    // Render Round of 16
+    r16Col.innerHTML = `<div class="bracket-col-header">Round of 16</div><div class="bracket-matchups"></div>`;
+    const r16Matchups = r16Col.querySelector(".bracket-matchups");
+    bracket.r16.forEach((m, idx) => {
+        const card = document.createElement("div");
+        card.className = "bracket-matchup-card";
+
+        const homeSlot = document.createElement("div");
+        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
+        if (m.home) homeSlot.onclick = () => advanceTeam("r16", idx, m.home);
+
+        const awaySlot = document.createElement("div");
+        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
+        if (m.away) awaySlot.onclick = () => advanceTeam("r16", idx, m.away);
+
+        card.appendChild(homeSlot);
+        card.appendChild(awaySlot);
+        r16Matchups.appendChild(card);
+    });
+
+    // Render Quarterfinals
+    qfCol.innerHTML = `<div class="bracket-col-header">Quarterfinals</div><div class="bracket-matchups"></div>`;
+    const qfMatchups = qfCol.querySelector(".bracket-matchups");
+    bracket.qf.forEach((m, idx) => {
+        const card = document.createElement("div");
+        card.className = "bracket-matchup-card";
+
+        const homeSlot = document.createElement("div");
+        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
+        if (m.home) homeSlot.onclick = () => advanceTeam("qf", idx, m.home);
+
+        const awaySlot = document.createElement("div");
+        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
+        if (m.away) awaySlot.onclick = () => advanceTeam("qf", idx, m.away);
+
+        card.appendChild(homeSlot);
+        card.appendChild(awaySlot);
+        qfMatchups.appendChild(card);
+    });
+
+    // Render Semifinals
+    sfCol.innerHTML = `<div class="bracket-col-header">Semifinals</div><div class="bracket-matchups"></div>`;
+    const sfMatchups = sfCol.querySelector(".bracket-matchups");
+    bracket.sf.forEach((m, idx) => {
+        const card = document.createElement("div");
+        card.className = "bracket-matchup-card";
+
+        const homeSlot = document.createElement("div");
+        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
+        if (m.home) homeSlot.onclick = () => advanceTeam("sf", idx, m.home);
+
+        const awaySlot = document.createElement("div");
+        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
+        if (m.away) awaySlot.onclick = () => advanceTeam("sf", idx, m.away);
+
+        card.appendChild(homeSlot);
+        card.appendChild(awaySlot);
+        sfMatchups.appendChild(card);
+    });
+
+    // Render Final
+    finalCol.innerHTML = `<div class="bracket-col-header">Grand Final</div><div class="bracket-matchups"></div>`;
+    const finalMatchups = finalCol.querySelector(".bracket-matchups");
+    const mFinal = bracket.final;
+    
+    const card = document.createElement("div");
+    card.className = "bracket-matchup-card";
+    card.style.border = "1.5px solid var(--gold)";
+
+    const homeSlot = document.createElement("div");
+    homeSlot.innerHTML = getSlotHtml(mFinal.home, mFinal.away, mFinal.winner === mFinal.home, mFinal.winner !== null && mFinal.winner !== mFinal.home);
+    if (mFinal.home) homeSlot.onclick = () => advanceTeam("final", 0, mFinal.home);
+
+    const awaySlot = document.createElement("div");
+    awaySlot.innerHTML = getSlotHtml(mFinal.away, mFinal.home, mFinal.winner === mFinal.away, mFinal.winner !== null && mFinal.winner !== mFinal.away);
+    if (mFinal.away) awaySlot.onclick = () => advanceTeam("final", 0, mFinal.away);
+
+    card.appendChild(homeSlot);
+    card.appendChild(awaySlot);
+    finalMatchups.appendChild(card);
+
+    // If there's a champion, make sure the champion display box is populated
+    if (mFinal.winner) {
+        triggerCelebration(mFinal.winner);
+    } else {
+        document.getElementById("champion-display").style.display = "none";
+    }
+}
+
+// Celebration details
+function triggerCelebration(teamId) {
+    const t = TEAMS[teamId];
+    const container = document.getElementById("champion-display");
+    if (!t || !container) return;
+
+    document.getElementById("champ-flag-img").src = `https://flagcdn.com/w160/${t.flag}.png`;
+    document.getElementById("champ-team-name").innerText = t.name;
+    container.style.display = "block";
+
+    // Confetti canvas trigger
+    triggerConfetti();
+}
+
+function triggerConfetti() {
+    const canvas = document.getElementById("confetti-canvas");
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ["#10b981", "#3b82f6", "#ef4444", "#f59e0b", "#a855f7", "#ec4899"];
+    const pieces = [];
+
+    for (let i = 0; i < 150; i++) {
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            r: Math.random() * 6 + 4,
+            d: Math.random() * canvas.height,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            tilt: Math.random() * 10 - 5,
+            tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+            tiltAngle: 0
+        });
+    }
+
+    let animationFrame;
+    const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        pieces.forEach(p => {
+            p.tiltAngle += p.tiltAngleIncremental;
+            p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+            p.x += Math.sin(p.tiltAngle);
+            p.tilt = Math.sin(p.tiltAngle - p.r/2) * 15;
+
+            ctx.beginPath();
+            ctx.lineWidth = p.r;
+            ctx.strokeStyle = p.color;
+            ctx.moveTo(p.x + p.tilt + p.r/2, p.y);
+            ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r/2);
+            ctx.stroke();
+        });
+
+        // Loop animation for 5 seconds
+        if (pieces.some(p => p.y < canvas.height)) {
+            animationFrame = requestAnimationFrame(draw);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    };
+
+    draw();
+
+    // Clean up animation on resize or tab switch
+    setTimeout(() => {
+        cancelAnimationFrame(animationFrame);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 6000);
+}
+
+// 8. Tab management
+function switchTab(tabId) {
+    const tabs = document.querySelectorAll(".nav-tab");
+    const contents = document.querySelectorAll(".tab-content");
+
+    tabs.forEach(t => t.classList.remove("active"));
+    contents.forEach(c => c.classList.remove("active"));
+
+    // Find trigger tab
+    const activeTab = Array.from(tabs).find(t => t.getAttribute("onclick").includes(tabId));
+    if (activeTab) activeTab.classList.add("active");
+
+    const activeContent = document.getElementById(tabId);
+    if (activeContent) activeContent.classList.add("active");
+
+    // Close mobile nav menu
+    document.getElementById("nav-menu-links").classList.remove("active");
+
+    // Rerender specific views on tab load
+    if (tabId === "groups") renderGroups();
+    if (tabId === "fixtures") renderFixtures();
+    if (tabId === "teams") renderTeams();
+    if (tabId === "bracket") renderBracket();
+}
+
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+    const menu = document.getElementById("nav-menu-links");
+    if (menu) menu.classList.toggle("active");
+}
+
+// 9. Initial Load
+window.addEventListener("DOMContentLoaded", () => {
+    initFixtures();
+    initStandings();
+    
+    // Load local storage predictions if any
+    loadFromLocalStorage();
+    
+    // Perform initial standing computations
+    calculateStandings();
+    
+    // Render
+    renderAll();
+});
+
+// Interactive Dashboard Stats Card click handler
+function handleStatClick(type) {
+    if (type === 'teams') {
+        appState.hostFilterOnly = false;
+        const searchInput = document.getElementById("team-search");
+        const confFilter = document.getElementById("team-conf-filter");
+        if (searchInput) searchInput.value = "";
+        if (confFilter) confFilter.value = "all";
+        switchTab('teams');
+    } else if (type === 'fixtures') {
+        const searchInput = document.getElementById("filter-search");
+        const groupFilter = document.getElementById("filter-group");
+        const venueFilter = document.getElementById("filter-venue");
+        if (searchInput) searchInput.value = "";
+        if (groupFilter) groupFilter.value = "all";
+        if (venueFilter) venueFilter.value = "all";
+        renderFixtures();
+        switchTab('fixtures');
+    } else if (type === 'hosts') {
+        appState.hostFilterOnly = true;
+        const searchInput = document.getElementById("team-search");
+        const confFilter = document.getElementById("team-conf-filter");
+        if (searchInput) searchInput.value = "";
+        if (confFilter) confFilter.value = "all";
+        switchTab('teams');
+    } else if (type === 'venues') {
+        switchTab('dashboard');
+        const list = document.querySelector(".stadium-mini-list");
+        if (list) {
+            list.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Trigger visual neon pulse border glow
+            const parentCard = list.closest(".glass-panel");
+            if (parentCard) {
+                parentCard.classList.add("venue-highlight-effect");
+                setTimeout(() => {
+                    parentCard.classList.remove("venue-highlight-effect");
+                }, 2500);
+            }
+        }
+    }
+}
