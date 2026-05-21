@@ -627,9 +627,6 @@ function renderGroups() {
         groupCard.innerHTML = `
             <div class="group-card-header">
                 <span class="group-name">Group ${g}</span>
-                <button class="btn-simulate-mini" onclick="simulateGroup('${g}')">
-                    <i class="fas fa-magic"></i> Simulate
-                </button>
             </div>
             <table class="standings-table">
                 <thead>
@@ -737,9 +734,7 @@ function renderFixtures() {
             </div>
             
             <div class="match-action-area">
-                <button class="btn-action-mini ${isSaved ? 'saved' : ''}" onclick="quickSimMatch(${m.id})" title="Simulate match score">
-                    <i class="fas fa-dice"></i>
-                </button>
+                <!-- Real points / Manual entry only -->
             </div>
         `;
 
