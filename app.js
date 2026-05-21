@@ -439,7 +439,6 @@ function updateKnockoutScore(round, matchIdx, side, value) {
 
     syncBracketProgression();
     saveToLocalStorage();
-    renderBracket();
 }
 
 // Smart Soccer Match Simulator (Poisson/Custom realistic distribution)
@@ -796,9 +795,6 @@ function updateMatchScore(matchId, side, value) {
     // Re-render group tables and bracket seamlessly
     renderGroups();
     renderBracket();
-    
-    // Toggle active saved class visual representation
-    renderFixtures();
 }
 
 // Quick simulate single match via dice icon
@@ -1162,7 +1158,23 @@ window.addEventListener("DOMContentLoaded", () => {
                 appState.bracket = data.bracket;
             }
             calculateStandings();
-            renderAll();
+            
+            // Protect Admin focus from being stolen by live sync while typing
+            renderCountdown();
+            renderGroups();
+            renderTeams();
+            
+            if (IS_ADMIN) {
+                const activeEl = document.activeElement;
+                const isTyping = activeEl && (activeEl.classList.contains("score-input") || activeEl.classList.contains("knockout-score-input"));
+                if (!isTyping) {
+                    renderFixtures();
+                    renderBracket();
+                }
+            } else {
+                renderFixtures();
+                renderBracket();
+            }
         });
     } else {
         // Fallback to local storage
