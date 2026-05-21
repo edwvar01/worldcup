@@ -101,11 +101,11 @@ let appState = {
     standings: {},
     best3rd: [],
     bracket: {
-        r32: Array(16).fill(null).map(() => ({ home: null, away: null, winner: null })),
-        r16: Array(8).fill(null).map(() => ({ home: null, away: null, winner: null })),
-        qf: Array(4).fill(null).map(() => ({ home: null, away: null, winner: null })),
-        sf: Array(2).fill(null).map(() => ({ home: null, away: null, winner: null })),
-        final: { home: null, away: null, winner: null }
+        r32: Array(16).fill(null).map(() => ({ home: null, away: null, homeScore: null, awayScore: null, winner: null })),
+        r16: Array(8).fill(null).map(() => ({ home: null, away: null, homeScore: null, awayScore: null, winner: null })),
+        qf: Array(4).fill(null).map(() => ({ home: null, away: null, homeScore: null, awayScore: null, winner: null })),
+        sf: Array(2).fill(null).map(() => ({ home: null, away: null, homeScore: null, awayScore: null, winner: null })),
+        final: { home: null, away: null, homeScore: null, awayScore: null, winner: null }
     },
     hostFilterOnly: false
 };
@@ -325,6 +325,8 @@ function seedRoundOf32() {
             currentMatch.home = m.home;
             currentMatch.away = m.away;
             currentMatch.winner = null; // Reset winner on seeding changes
+            currentMatch.homeScore = null;
+            currentMatch.awayScore = null;
         }
     });
 
@@ -340,15 +342,13 @@ function syncBracketProgression() {
     for (let i = 0; i < 8; i++) {
         const m1 = bracket.r32[i * 2];
         const m2 = bracket.r32[i * 2 + 1];
-        
         const nextMatch = bracket.r16[i];
-        const prevHome = m1.winner;
-        const prevAway = m2.winner;
-
-        if (nextMatch.home !== prevHome || nextMatch.away !== prevAway) {
-            nextMatch.home = prevHome;
-            nextMatch.away = prevAway;
-            nextMatch.winner = null; // Reset winner
+        if (nextMatch.home !== m1.winner || nextMatch.away !== m2.winner) {
+            nextMatch.home = m1.winner;
+            nextMatch.away = m2.winner;
+            nextMatch.winner = null;
+            nextMatch.homeScore = null;
+            nextMatch.awayScore = null;
         }
     }
 
@@ -356,15 +356,13 @@ function syncBracketProgression() {
     for (let i = 0; i < 4; i++) {
         const m1 = bracket.r16[i * 2];
         const m2 = bracket.r16[i * 2 + 1];
-        
         const nextMatch = bracket.qf[i];
-        const prevHome = m1.winner;
-        const prevAway = m2.winner;
-
-        if (nextMatch.home !== prevHome || nextMatch.away !== prevAway) {
-            nextMatch.home = prevHome;
-            nextMatch.away = prevAway;
+        if (nextMatch.home !== m1.winner || nextMatch.away !== m2.winner) {
+            nextMatch.home = m1.winner;
+            nextMatch.away = m2.winner;
             nextMatch.winner = null;
+            nextMatch.homeScore = null;
+            nextMatch.awayScore = null;
         }
     }
 
@@ -372,15 +370,13 @@ function syncBracketProgression() {
     for (let i = 0; i < 2; i++) {
         const m1 = bracket.qf[i * 2];
         const m2 = bracket.qf[i * 2 + 1];
-        
         const nextMatch = bracket.sf[i];
-        const prevHome = m1.winner;
-        const prevAway = m2.winner;
-
-        if (nextMatch.home !== prevHome || nextMatch.away !== prevAway) {
-            nextMatch.home = prevHome;
-            nextMatch.away = prevAway;
+        if (nextMatch.home !== m1.winner || nextMatch.away !== m2.winner) {
+            nextMatch.home = m1.winner;
+            nextMatch.away = m2.winner;
             nextMatch.winner = null;
+            nextMatch.homeScore = null;
+            nextMatch.awayScore = null;
         }
     }
 
@@ -388,33 +384,37 @@ function syncBracketProgression() {
     const sf1 = bracket.sf[0];
     const sf2 = bracket.sf[1];
     const final = bracket.final;
-    const finalHome = sf1.winner;
-    const finalAway = sf2.winner;
-
-    if (final.home !== finalHome || final.away !== finalAway) {
-        final.home = finalHome;
-        final.away = finalAway;
+    if (final.home !== sf1.winner || final.away !== sf2.winner) {
+        final.home = sf1.winner;
+        final.away = sf2.winner;
         final.winner = null;
+        final.homeScore = null;
+        final.awayScore = null;
     }
 }
 
-// 6. Interactive Prediction Advance Handler
-function advanceTeam(round, matchIndex, teamId) {
-    if (!teamId) return;
+// 6. Real-time Knockout Score Handler
+function updateKnockoutScore(round, matchIdx, side, value) {
+    let match = round === 'final' ? appState.bracket.final : appState.bracket[round][matchIdx];
     
-    if (round === "r32") {
-        appState.bracket.r32[matchIndex].winner = teamId;
-    } else if (round === "r16") {
-        appState.bracket.r16[matchIndex].winner = teamId;
-    } else if (round === "qf") {
-        appState.bracket.qf[matchIndex].winner = teamId;
-    } else if (round === "sf") {
-        appState.bracket.sf[matchIndex].winner = teamId;
-    } else if (round === "final") {
-        appState.bracket.final.winner = teamId;
+    if (value === "") {
+        if (side === "home") match.homeScore = null;
+        else match.awayScore = null;
+    } else {
+        const score = Math.max(0, parseInt(value));
+        if (side === "home") match.homeScore = score;
+        else match.awayScore = score;
+    }
+    
+    if (match.homeScore !== null && match.awayScore !== null && match.homeScore !== undefined && match.awayScore !== undefined) {
+        if (match.homeScore > match.awayScore) match.winner = match.home;
+        else if (match.awayScore > match.homeScore) match.winner = match.away;
+        else match.winner = null;
         
-        // Celebrate Champion!
-        triggerCelebration(teamId);
+        if (round === 'final' && match.winner) triggerCelebration(match.winner);
+    } else {
+        match.winner = null;
+        if (round === 'final') document.getElementById("champion-display").style.display = "none";
     }
 
     syncBracketProgression();
@@ -881,22 +881,28 @@ function renderBracket() {
     const bracket = appState.bracket;
 
     // Helper to generate a team slot HTML
-    const getSlotHtml = (teamId, opponentId, isWinner, isLoser) => {
+    const getSlotHtml = (m, side, round, matchIdx) => {
+        const teamId = side === 'home' ? m.home : m.away;
+        const score = side === 'home' ? m.homeScore : m.awayScore;
+        
         if (!teamId) {
             return `<div class="bracket-team-slot empty">TBD</div>`;
         }
         const t = TEAMS[teamId];
         let slotClass = "bracket-team-slot";
-        if (isWinner) slotClass += " winner";
-        if (isLoser) slotClass += " loser";
+        if (m.winner === teamId) slotClass += " winner";
+        if (m.winner !== null && m.winner !== teamId) slotClass += " loser";
 
         return `
-            <div class="${slotClass}">
+            <div class="${slotClass}" style="display: flex; justify-content: space-between; align-items: center; padding-right: 0.5rem;">
                 <div class="bracket-team-info">
                     <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
                     <span>${t.name}</span>
                 </div>
-                <span class="advance-arrow"><i class="fas fa-chevron-right"></i></span>
+                <input type="number" min="0" max="20" class="score-input knockout-score-input" 
+                    style="width: 35px; height: 30px; font-size: 1rem; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" 
+                    value="${score !== undefined && score !== null ? score : ''}" 
+                    onchange="updateKnockoutScore('${round}', ${matchIdx}, '${side}', this.value)">
             </div>
         `;
     };
@@ -909,12 +915,10 @@ function renderBracket() {
         card.className = "bracket-matchup-card";
         
         const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
-        if (m.home) homeSlot.onclick = () => advanceTeam("r32", idx, m.home);
+        homeSlot.innerHTML = getSlotHtml(m, 'home', 'r32', idx);
 
         const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
-        if (m.away) awaySlot.onclick = () => advanceTeam("r32", idx, m.away);
+        awaySlot.innerHTML = getSlotHtml(m, 'away', 'r32', idx);
 
         card.appendChild(homeSlot);
         card.appendChild(awaySlot);
@@ -929,12 +933,10 @@ function renderBracket() {
         card.className = "bracket-matchup-card";
 
         const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
-        if (m.home) homeSlot.onclick = () => advanceTeam("r16", idx, m.home);
+        homeSlot.innerHTML = getSlotHtml(m, 'home', 'r16', idx);
 
         const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
-        if (m.away) awaySlot.onclick = () => advanceTeam("r16", idx, m.away);
+        awaySlot.innerHTML = getSlotHtml(m, 'away', 'r16', idx);
 
         card.appendChild(homeSlot);
         card.appendChild(awaySlot);
@@ -949,12 +951,10 @@ function renderBracket() {
         card.className = "bracket-matchup-card";
 
         const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
-        if (m.home) homeSlot.onclick = () => advanceTeam("qf", idx, m.home);
+        homeSlot.innerHTML = getSlotHtml(m, 'home', 'qf', idx);
 
         const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
-        if (m.away) awaySlot.onclick = () => advanceTeam("qf", idx, m.away);
+        awaySlot.innerHTML = getSlotHtml(m, 'away', 'qf', idx);
 
         card.appendChild(homeSlot);
         card.appendChild(awaySlot);
@@ -969,12 +969,10 @@ function renderBracket() {
         card.className = "bracket-matchup-card";
 
         const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m.home, m.away, m.winner === m.home, m.winner !== null && m.winner !== m.home);
-        if (m.home) homeSlot.onclick = () => advanceTeam("sf", idx, m.home);
+        homeSlot.innerHTML = getSlotHtml(m, 'home', 'sf', idx);
 
         const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m.away, m.home, m.winner === m.away, m.winner !== null && m.winner !== m.away);
-        if (m.away) awaySlot.onclick = () => advanceTeam("sf", idx, m.away);
+        awaySlot.innerHTML = getSlotHtml(m, 'away', 'sf', idx);
 
         card.appendChild(homeSlot);
         card.appendChild(awaySlot);
@@ -991,12 +989,10 @@ function renderBracket() {
     card.style.border = "1.5px solid var(--gold)";
 
     const homeSlot = document.createElement("div");
-    homeSlot.innerHTML = getSlotHtml(mFinal.home, mFinal.away, mFinal.winner === mFinal.home, mFinal.winner !== null && mFinal.winner !== mFinal.home);
-    if (mFinal.home) homeSlot.onclick = () => advanceTeam("final", 0, mFinal.home);
+    homeSlot.innerHTML = getSlotHtml(mFinal, 'home', 'final', 0);
 
     const awaySlot = document.createElement("div");
-    awaySlot.innerHTML = getSlotHtml(mFinal.away, mFinal.home, mFinal.winner === mFinal.away, mFinal.winner !== null && mFinal.winner !== mFinal.away);
-    if (mFinal.away) awaySlot.onclick = () => advanceTeam("final", 0, mFinal.away);
+    awaySlot.innerHTML = getSlotHtml(mFinal, 'away', 'final', 0);
 
     card.appendChild(homeSlot);
     card.appendChild(awaySlot);

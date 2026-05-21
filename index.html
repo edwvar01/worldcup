@@ -43,7 +43,7 @@
                     <i class="fas fa-flag"></i> Teams Explorer
                 </button>
                 <button class="nav-tab" onclick="switchTab('bracket')">
-                    <i class="fas fa-sitemap"></i> Bracket Predictor
+                    <i class="fas fa-sitemap"></i> Tournament Bracket
                 </button>
             </nav>
             
@@ -338,19 +338,16 @@
             </div>
         </section>
 
-        <!-- 5. BRACKET PREDICTOR TAB -->
+        <!-- 5. TOURNAMENT BRACKET TAB -->
         <section id="bracket" class="tab-content">
             <div style="text-align: center; margin-bottom: 2rem;">
-                <h2 class="section-title">Knockout Phase <span>Bracket Predictor</span></h2>
+                <h2 class="section-title">Knockout Phase <span>Tournament Bracket</span></h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance.
+                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance. Enter real match scores to automatically progress the tournament.
                 </p>
             </div>
 
             <div class="bracket-wrapper">
-                <p class="bracket-instruction">
-                    👉 <strong>Interactive Bracket:</strong> Click or tap a team card inside a matchup block to instantly **advance** them to the next stage! Select your champion below.
-                </p>
 
                 <!-- Giant celebration display -->
                 <div class="trophy-container" id="champion-display" style="display: none; margin-bottom: 3rem;">
