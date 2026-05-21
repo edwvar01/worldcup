@@ -1185,4 +1185,81 @@ main {
     .match-action-area {
         justify-content: center;
     }
+    .teams-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+    .logo-text {
+        font-size: 1.2rem;
+    }
+    .logo-img {
+        width: 32px;
+        height: 32px;
+    }
+    .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        border-bottom: none;
+    }
+    .nav-tabs::-webkit-scrollbar {
+        height: 4px;
+    }
+    .nav-tabs::-webkit-scrollbar-thumb {
+        background: var(--primary-muted);
+        border-radius: 4px;
+    }
+    .nav-tab {
+        white-space: nowrap;
+    }
+    
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+    .venue-list {
+        grid-template-columns: 1fr;
+    }
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-wrapper, .select-filter {
+        width: 100%;
+    }
+    .controls-row {
+        flex-wrap: wrap;
+    }
+    .team-profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    .team-profile-flag {
+        width: 80px;
+        height: 56px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    .groups-grid {
+        grid-template-columns: 1fr;
+    }
+    /* Scale down bracket slightly more on tiny phones if necessary */
+    .bracket-container {
+        transform: scale(0.9);
+        transform-origin: top center;
+    }
 }
