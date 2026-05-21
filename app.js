@@ -209,7 +209,7 @@ function calculateStandings() {
 
     // Loop through matches
     appState.fixtures.forEach(m => {
-        if (m.homeScore !== null && m.awayScore !== null) {
+        if (m.homeScore != null && m.awayScore != null) {
             const hs = parseInt(m.homeScore);
             const as = parseInt(m.awayScore);
             const group = m.group;
@@ -426,7 +426,7 @@ function updateKnockoutScore(round, matchIdx, side, value) {
         else match.awayScore = score;
     }
     
-    if (match.homeScore !== null && match.awayScore !== null && match.homeScore !== undefined && match.awayScore !== undefined) {
+    if (match.homeScore != null && match.awayScore != null) {
         if (match.homeScore > match.awayScore) match.winner = match.home;
         else if (match.awayScore > match.homeScore) match.winner = match.away;
         else match.winner = null;
@@ -727,7 +727,7 @@ function renderFixtures() {
             weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
         });
 
-        const isSaved = m.homeScore !== null && m.awayScore !== null;
+        const isSaved = m.homeScore != null && m.awayScore != null;
 
         card.innerHTML = `
             <div class="match-info-left">
@@ -745,15 +745,15 @@ function renderFixtures() {
                 
                 <div class="match-score-inputs">
                     ${IS_ADMIN ? `
-                    <input type="number" min="0" max="20" class="score-input" value="${m.homeScore !== null ? m.homeScore : ''}" 
+                    <input type="number" min="0" max="20" class="score-input" value="${m.homeScore != null ? m.homeScore : ''}" 
                         onchange="updateMatchScore(${m.id}, 'home', this.value)" placeholder="-">
                     <span class="score-dash">:</span>
-                    <input type="number" min="0" max="20" class="score-input" value="${m.awayScore !== null ? m.awayScore : ''}" 
+                    <input type="number" min="0" max="20" class="score-input" value="${m.awayScore != null ? m.awayScore : ''}" 
                         onchange="updateMatchScore(${m.id}, 'away', this.value)" placeholder="-">
                     ` : `
-                    <span class="score-badge">${m.homeScore !== null ? m.homeScore : '-'}</span>
+                    <span class="score-badge">${m.homeScore != null ? m.homeScore : '-'}</span>
                     <span class="score-dash">:</span>
-                    <span class="score-badge">${m.awayScore !== null ? m.awayScore : '-'}</span>
+                    <span class="score-badge">${m.awayScore != null ? m.awayScore : '-'}</span>
                     `}
                 </div>
                 
@@ -764,7 +764,11 @@ function renderFixtures() {
             </div>
             
             <div class="match-action-area">
-                <!-- Real points / Manual entry only -->
+                ${IS_ADMIN ? `
+                <button class="btn-action-mini ${isSaved ? 'saved' : ''}" onclick="this.classList.add('saved');" title="Scores auto-save on typing. Click to visually confirm.">
+                    <i class="fas fa-check"></i>
+                </button>
+                ` : ``}
             </div>
         `;
 
