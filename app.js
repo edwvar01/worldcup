@@ -138,6 +138,7 @@ function initFixtures() {
         ["2026-06-17", "2026-06-18"], // Rd 2
         ["2026-06-24", "2026-06-25"]  // Rd 3
     ];
+    const matchTimes = ["12:00", "15:00", "18:00", "21:00"];
     let matchCounter = 1;
 
     groups.forEach((g, gIdx) => {
@@ -172,7 +173,7 @@ function initFixtures() {
 
         roundMatches.forEach((m, rIdx) => {
             appState.fixtures.push({
-                id: matchCounter++,
+                id: matchCounter,
                 group: g,
                 round: Math.floor(rIdx / 2) + 1,
                 home: m.home.id,
@@ -180,8 +181,10 @@ function initFixtures() {
                 homeScore: null,
                 awayScore: null,
                 date: m.date,
+                time: matchTimes[matchCounter % 4],
                 venue: m.venue.name + " (" + m.venue.city + ")"
             });
+            matchCounter++;
         });
     });
 }
@@ -726,13 +729,16 @@ function renderFixtures() {
             weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
         });
 
+        const timeStr = m.time || ["12:00", "15:00", "18:00", "21:00"][m.id % 4];
+        const formattedTime = ` @ ${timeStr} Local`;
+
         const isSaved = m.homeScore != null && m.awayScore != null;
 
         card.innerHTML = `
             <div class="match-info-left">
                 <span class="match-number">Match #${m.id}</span>
                 <span class="match-group-lbl">Group ${m.group} - Round ${m.round}</span>
-                <span class="match-meta-info">${formattedDate}</span>
+                <span class="match-meta-info">${formattedDate}${formattedTime}</span>
                 <span class="match-meta-info" style="font-style: italic;"><i class="fas fa-map-marker-alt"></i> ${m.venue}</span>
             </div>
             
