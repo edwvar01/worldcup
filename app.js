@@ -133,45 +133,58 @@ let appState = {
 // 2. Generate Group Fixtures (72 matches total)
 function initFixtures() {
     const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-    const matchDates = [
-        ["2026-06-11", "2026-06-12"], // Rd 1
-        ["2026-06-17", "2026-06-18"], // Rd 2
-        ["2026-06-24", "2026-06-25"]  // Rd 3
-    ];
-    const matchTimes = ["12:00", "15:00", "18:00", "21:00"];
+    const GROUP_DATES = {
+        "A": ["2026-06-11", "2026-06-18", "2026-06-24"],
+        "B": ["2026-06-12", "2026-06-18", "2026-06-24"],
+        "C": ["2026-06-13", "2026-06-19", "2026-06-24"],
+        "D": ["2026-06-13", "2026-06-19", "2026-06-25"],
+        "E": ["2026-06-14", "2026-06-20", "2026-06-25"],
+        "F": ["2026-06-14", "2026-06-20", "2026-06-25"],
+        "G": ["2026-06-15", "2026-06-21", "2026-06-26"],
+        "H": ["2026-06-15", "2026-06-21", "2026-06-26"],
+        "I": ["2026-06-16", "2026-06-22", "2026-06-26"],
+        "J": ["2026-06-16", "2026-06-22", "2026-06-27"],
+        "K": ["2026-06-17", "2026-06-23", "2026-06-27"],
+        "L": ["2026-06-17", "2026-06-23", "2026-06-27"]
+    };
+    const CITY_UTC_OFFSETS = {
+        "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
+        "Dallas": 5, "Houston": 5, "Kansas City": 5,
+        "New York/New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
+        "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
+    };
+    const ET_TIMES = ["13:00", "16:00", "19:00", "22:00"];
     let matchCounter = 1;
 
     groups.forEach((g, gIdx) => {
         const groupTeams = Object.values(TEAMS).filter(t => t.group === g);
         
-        // Custom Opening Stadium assignments to match official details
         let stadium1 = STADIUMS[gIdx % STADIUMS.length];
         let stadium2 = STADIUMS[(gIdx + 4) % STADIUMS.length];
 
-        if (g === "A") {
-            stadium1 = STADIUMS.find(s => s.name === "Estadio Azteca"); // Mexico City
-        } else if (g === "B") {
-            stadium1 = STADIUMS.find(s => s.name === "BMO Field"); // Toronto Stadium
-        } else if (g === "D") {
-            stadium1 = STADIUMS.find(s => s.name === "SoFi Stadium"); // LA Stadium
-        }
+        if (g === "A") stadium1 = STADIUMS.find(s => s.name === "Estadio Azteca");
+        else if (g === "B") stadium1 = STADIUMS.find(s => s.name === "BMO Field");
+        else if (g === "D") stadium1 = STADIUMS.find(s => s.name === "SoFi Stadium");
 
-        // T1, T2, T3, T4 based on team IDs alphabetically inside group
         const [t1, t2, t3, t4] = groupTeams;
+        const dates = GROUP_DATES[g];
 
         const roundMatches = [
-            // Rd 1
-            { home: t1, away: t2, date: g === "A" ? "2026-06-11" : (g === "B" || g === "D") ? "2026-06-12" : matchDates[0][0], venue: stadium1 },
-            { home: t3, away: t4, date: matchDates[0][1], venue: stadium2 },
-            // Rd 2
-            { home: t1, away: t3, date: matchDates[1][0], venue: stadium2 },
-            { home: t2, away: t4, date: matchDates[1][1], venue: stadium1 },
-            // Rd 3
-            { home: t4, away: t1, date: matchDates[2][0], venue: stadium1 },
-            { home: t2, away: t3, date: matchDates[2][1], venue: stadium2 }
+            { home: t1, away: t2, date: dates[0], venue: stadium1 },
+            { home: t3, away: t4, date: dates[0], venue: stadium2 },
+            { home: t1, away: t3, date: dates[1], venue: stadium2 },
+            { home: t2, away: t4, date: dates[1], venue: stadium1 },
+            { home: t4, away: t1, date: dates[2], venue: stadium1 },
+            { home: t2, away: t3, date: dates[2], venue: stadium2 }
         ];
 
         roundMatches.forEach((m, rIdx) => {
+            const etTime = ET_TIMES[matchCounter % 4];
+            const etHour = parseInt(etTime.split(":")[0]);
+            const offset = CITY_UTC_OFFSETS[m.venue.city] || 4;
+            const localHour = etHour - (offset - 4);
+            const localTimeStr = `${localHour.toString().padStart(2, '0')}:00`;
+
             appState.fixtures.push({
                 id: matchCounter,
                 group: g,
@@ -181,7 +194,7 @@ function initFixtures() {
                 homeScore: null,
                 awayScore: null,
                 date: m.date,
-                time: matchTimes[matchCounter % 4],
+                time: localTimeStr,
                 venue: m.venue.name + " (" + m.venue.city + ")"
             });
             matchCounter++;
