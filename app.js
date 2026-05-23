@@ -132,72 +132,125 @@ let appState = {
 
 // 2. Generate Group Fixtures (72 matches total)
 function initFixtures() {
-    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-    const GROUP_DATES = {
-        "A": ["2026-06-11", "2026-06-18", "2026-06-24"],
-        "B": ["2026-06-12", "2026-06-18", "2026-06-24"],
-        "C": ["2026-06-13", "2026-06-19", "2026-06-24"],
-        "D": ["2026-06-13", "2026-06-19", "2026-06-25"],
-        "E": ["2026-06-14", "2026-06-20", "2026-06-25"],
-        "F": ["2026-06-14", "2026-06-20", "2026-06-25"],
-        "G": ["2026-06-15", "2026-06-21", "2026-06-26"],
-        "H": ["2026-06-15", "2026-06-21", "2026-06-26"],
-        "I": ["2026-06-16", "2026-06-22", "2026-06-26"],
-        "J": ["2026-06-16", "2026-06-22", "2026-06-27"],
-        "K": ["2026-06-17", "2026-06-23", "2026-06-27"],
-        "L": ["2026-06-17", "2026-06-23", "2026-06-27"]
-    };
-    const CITY_UTC_OFFSETS = {
-        "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
-        "Dallas": 5, "Houston": 5, "Kansas City": 5,
-        "New York/New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
-        "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
-    };
-    const ET_TIMES = ["13:00", "16:00", "19:00", "22:00"];
-    let matchCounter = 1;
+    const EXACT_FIXTURES = [
+        { id: 1, date: "2026-06-12", timeIST: "12:30 a.m.", home: "MEX", away: "RSA", venue: "Estadio Azteca, Mexico City" },
+        { id: 2, date: "2026-06-12", timeIST: "07:30 a.m.", home: "KOR", away: "CZE", venue: "Estadio Akron, Guadalajara" },
+        { id: 3, date: "2026-06-13", timeIST: "12:30 a.m.", home: "CAN", away: "BIH", venue: "BMO Field, Toronto" },
+        { id: 4, date: "2026-06-13", timeIST: "06:30 a.m.", home: "USA", away: "PAR", venue: "SoFi Stadium, Los Angeles" },
+        { id: 5, date: "2026-06-14", timeIST: "12:30 a.m.", home: "QAT", away: "SUI", venue: "Levi's Stadium, San Francisco Bay Area" },
+        { id: 6, date: "2026-06-14", timeIST: "03:30 a.m.", home: "BRA", away: "MAR", venue: "MetLife Stadium, New Jersey" },
+        { id: 7, date: "2026-06-14", timeIST: "06:30 a.m.", home: "HAI", away: "SCO", venue: "Gillette Stadium, Boston" },
+        { id: 8, date: "2026-06-14", timeIST: "09:30 a.m.", home: "AUS", away: "GEO", venue: "Lumen Field, Seattle" },
+        { id: 9, date: "2026-06-14", timeIST: "10:30 p.m.", home: "GER", away: "CUW", venue: "NRG Stadium, Houston" },
+        { id: 10, date: "2026-06-15", timeIST: "01:30 a.m.", home: "NED", away: "JPN", venue: "AT&T Stadium, Dallas" },
+        { id: 11, date: "2026-06-15", timeIST: "04:30 a.m.", home: "CIV", away: "ECU", venue: "Lincoln Financial Field, Philadelphia" },
+        { id: 12, date: "2026-06-15", timeIST: "07:30 a.m.", home: "UKR", away: "TUN", venue: "Estadio BBVA, Monterrey" },
+        { id: 13, date: "2026-06-15", timeIST: "09:30 p.m.", home: "ESP", away: "CPV", venue: "Mercedes-Benz Stadium, Atlanta" },
+        { id: 14, date: "2026-06-16", timeIST: "12:30 a.m.", home: "BEL", away: "EGY", venue: "Lumen Field, Seattle" },
+        { id: 15, date: "2026-06-16", timeIST: "03:30 a.m.", home: "KSA", away: "URU", venue: "Hard Rock Stadium, Miami" },
+        { id: 16, date: "2026-06-16", timeIST: "06:30 a.m.", home: "IRN", away: "NZL", venue: "SoFi Stadium, Los Angeles" },
+        { id: 17, date: "2026-06-17", timeIST: "12:30 a.m.", home: "FRA", away: "SEN", venue: "MetLife Stadium, New Jersey" },
+        { id: 18, date: "2026-06-17", timeIST: "03:30 a.m.", home: "CRC", away: "NOR", venue: "Gillette Stadium, Boston" },
+        { id: 19, date: "2026-06-17", timeIST: "06:30 a.m.", home: "ARG", away: "ALG", venue: "Arrowhead Stadium, Kansas City" },
+        { id: 20, date: "2026-06-17", timeIST: "09:30 a.m.", home: "AUT", away: "JOR", venue: "Levi's Stadium, San Francisco Bay Area" },
+        { id: 21, date: "2026-06-17", timeIST: "10:30 p.m.", home: "POR", away: "HON", venue: "NRG Stadium, Houston" },
+        { id: 22, date: "2026-06-18", timeIST: "01:30 a.m.", home: "ENG", away: "CRO", venue: "AT&T Stadium, Dallas" },
+        { id: 23, date: "2026-06-18", timeIST: "04:30 a.m.", home: "GHA", away: "PAN", venue: "BMO Field, Toronto" },
+        { id: 24, date: "2026-06-18", timeIST: "07:30 a.m.", home: "UZB", away: "COL", venue: "Estadio Azteca, Mexico City" },
+        { id: 25, date: "2026-06-18", timeIST: "09:30 p.m.", home: "CZE", away: "RSA", venue: "Mercedes-Benz Stadium, Atlanta" },
+        { id: 26, date: "2026-06-19", timeIST: "12:30 a.m.", home: "SUI", away: "BIH", venue: "SoFi Stadium, Los Angeles" },
+        { id: 27, date: "2026-06-19", timeIST: "03:30 a.m.", home: "CAN", away: "QAT", venue: "BC Place, Vancouver" },
+        { id: 28, date: "2026-06-19", timeIST: "06:30 a.m.", home: "MEX", away: "KOR", venue: "Estadio Akron, Guadalajara" },
+        { id: 29, date: "2026-06-20", timeIST: "12:30 a.m.", home: "USA", away: "AUS", venue: "Lumen Field, Seattle" },
+        { id: 30, date: "2026-06-20", timeIST: "03:30 a.m.", home: "SCO", away: "MAR", venue: "Gillette Stadium, Boston" },
+        { id: 31, date: "2026-06-20", timeIST: "06:30 a.m.", home: "BRA", away: "HAI", venue: "Lincoln Financial Field, Philadelphia" },
+        { id: 32, date: "2026-06-20", timeIST: "09:30 a.m.", home: "GEO", away: "PAR", venue: "Levi's Stadium, San Francisco Bay Area" },
+        { id: 33, date: "2026-06-20", timeIST: "10:30 p.m.", home: "NED", away: "UKR", venue: "NRG Stadium, Houston" },
+        { id: 34, date: "2026-06-21", timeIST: "01:30 a.m.", home: "GER", away: "CIV", venue: "BMO Field, Toronto" },
+        { id: 35, date: "2026-06-21", timeIST: "05:30 a.m.", home: "ECU", away: "CUW", venue: "Arrowhead Stadium, Kansas City" },
+        { id: 36, date: "2026-06-21", timeIST: "09:30 a.m.", home: "TUN", away: "JPN", venue: "Estadio BBVA, Monterrey" },
+        { id: 37, date: "2026-06-21", timeIST: "09:30 p.m.", home: "ESP", away: "KSA", venue: "Mercedes-Benz Stadium, Atlanta" },
+        { id: 38, date: "2026-06-22", timeIST: "12:30 a.m.", home: "BEL", away: "IRN", venue: "SoFi Stadium, Los Angeles" },
+        { id: 39, date: "2026-06-22", timeIST: "03:30 a.m.", home: "URU", away: "CPV", venue: "Hard Rock Stadium, Miami" },
+        { id: 40, date: "2026-06-22", timeIST: "06:00 a.m.", home: "NZL", away: "EGY", venue: "BC Place, Vancouver" },
+        { id: 41, date: "2026-06-22", timeIST: "10:30 p.m.", home: "ARG", away: "AUT", venue: "AT&T Stadium, Dallas" },
+        { id: 42, date: "2026-06-23", timeIST: "02:30 a.m.", home: "FRA", away: "CRC", venue: "Lincoln Financial Field, Philadelphia" },
+        { id: 43, date: "2026-06-23", timeIST: "05:30 a.m.", home: "NOR", away: "SEN", venue: "MetLife Stadium, New Jersey" },
+        { id: 44, date: "2026-06-23", timeIST: "08:30 a.m.", home: "JOR", away: "ALG", venue: "Levi's Stadium, San Francisco Bay Area" },
+        { id: 45, date: "2026-06-23", timeIST: "10:30 p.m.", home: "POR", away: "UZB", venue: "NRG Stadium, Houston" },
+        { id: 46, date: "2026-06-24", timeIST: "12:30 a.m.", home: "ENG", away: "GHA", venue: "Gillette Stadium, Boston" },
+        { id: 47, date: "2026-06-24", timeIST: "03:30 a.m.", home: "PAN", away: "CRO", venue: "BMO Field, Toronto" },
+        { id: 48, date: "2026-06-24", timeIST: "06:30 a.m.", home: "COL", away: "HON", venue: "Estadio Akron, Guadalajara" },
+        { id: 49, date: "2026-06-24", timeIST: "06:30 a.m.", home: "SUI", away: "CAN", venue: "BC Place, Vancouver" },
+        { id: 50, date: "2026-06-25", timeIST: "12:30 a.m.", home: "BIH", away: "QAT", venue: "Lumen Field, Seattle" },
+        { id: 51, date: "2026-06-25", timeIST: "03:30 a.m.", home: "MAR", away: "HAI", venue: "Mercedes-Benz Stadium, Atlanta" },
+        { id: 52, date: "2026-06-25", timeIST: "03:30 a.m.", home: "SCO", away: "BRA", venue: "Hard Rock Stadium, Miami" },
+        { id: 53, date: "2026-06-25", timeIST: "06:30 a.m.", home: "RSA", away: "KOR", venue: "Estadio BBVA, Monterrey" },
+        { id: 54, date: "2026-06-25", timeIST: "06:30 a.m.", home: "CZE", away: "MEX", venue: "Estadio Azteca, Mexico City" },
+        { id: 55, date: "2026-06-26", timeIST: "01:30 a.m.", home: "CUW", away: "CIV", venue: "Lincoln Financial Field, Philadelphia" },
+        { id: 56, date: "2026-06-26", timeIST: "01:30 a.m.", home: "ECU", away: "GER", venue: "MetLife Stadium, New Jersey" },
+        { id: 57, date: "2026-06-26", timeIST: "04:30 a.m.", home: "TUN", away: "NED", venue: "Arrowhead Stadium, Kansas City" },
+        { id: 58, date: "2026-06-26", timeIST: "04:30 a.m.", home: "JPN", away: "UKR", venue: "AT&T Stadium, Dallas" },
+        { id: 59, date: "2026-06-26", timeIST: "07:30 a.m.", home: "GEO", away: "USA", venue: "SoFi Stadium, Los Angeles" },
+        { id: 60, date: "2026-06-26", timeIST: "07:30 a.m.", home: "PAR", away: "AUS", venue: "Levi's Stadium, San Francisco Bay Area" },
+        { id: 61, date: "2026-06-27", timeIST: "12:30 a.m.", home: "NOR", away: "FRA", venue: "Gillette Stadium, Boston" },
+        { id: 62, date: "2026-06-27", timeIST: "12:30 a.m.", home: "SEN", away: "CRC", venue: "BMO Field, Toronto" },
+        { id: 63, date: "2026-06-27", timeIST: "05:30 a.m.", home: "CPV", away: "KSA", venue: "NRG Stadium, Houston" },
+        { id: 64, date: "2026-06-27", timeIST: "05:30 a.m.", home: "URU", away: "ESP", venue: "Estadio Akron, Guadalajara" },
+        { id: 65, date: "2026-06-27", timeIST: "08:30 a.m.", home: "NZL", away: "BEL", venue: "BC Place, Vancouver" },
+        { id: 66, date: "2026-06-27", timeIST: "08:30 a.m.", home: "EGY", away: "IRN", venue: "Lumen Field, Seattle" },
+        { id: 67, date: "2026-06-28", timeIST: "02:30 a.m.", home: "PAN", away: "ENG", venue: "MetLife Stadium, New Jersey" },
+        { id: 68, date: "2026-06-28", timeIST: "02:30 a.m.", home: "CRO", away: "GHA", venue: "Lincoln Financial Field, Philadelphia" },
+        { id: 69, date: "2026-06-28", timeIST: "05:00 a.m.", home: "COL", away: "POR", venue: "Hard Rock Stadium, Miami" },
+        { id: 70, date: "2026-06-28", timeIST: "05:00 a.m.", home: "HON", away: "UZB", venue: "Mercedes-Benz Stadium, Atlanta" },
+        { id: 71, date: "2026-06-28", timeIST: "07:30 a.m.", home: "ALG", away: "AUT", venue: "Arrowhead Stadium, Kansas City" },
+        { id: 72, date: "2026-06-28", timeIST: "07:30 a.m.", home: "JOR", away: "ARG", venue: "AT&T Stadium, Dallas" }
+    ];
 
-    groups.forEach((g, gIdx) => {
-        const groupTeams = Object.values(TEAMS).filter(t => t.group === g);
+    EXACT_FIXTURES.forEach((m, idx) => {
+        const homeTeam = TEAMS[m.home];
+        if (!homeTeam) return;
+
+        let isPM = m.timeIST.includes("p.m.");
+        let parts = m.timeIST.split(" ")[0].split(":");
+        let h = parseInt(parts[0]);
+        let min = parseInt(parts[1]);
+        if (isPM && h !== 12) h += 12;
+        if (!isPM && h === 12) h = 0;
         
-        let stadium1 = STADIUMS[gIdx % STADIUMS.length];
-        let stadium2 = STADIUMS[(gIdx + 4) % STADIUMS.length];
+        let utcMinutes = h * 60 + min - 330; 
+        
+        const CITY_UTC_OFFSETS = {
+            "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
+            "Dallas": 5, "Houston": 5, "Kansas City": 5,
+            "New York": 4, "New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
+            "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
+        };
+        let offset = 4;
+        for (let c in CITY_UTC_OFFSETS) {
+            if (m.venue.includes(c)) offset = CITY_UTC_OFFSETS[c];
+        }
+        
+        let localMinutes = utcMinutes - (offset * 60);
+        while (localMinutes < 0) localMinutes += 24 * 60;
+        localMinutes = localMinutes % (24 * 60);
+        
+        let lh = Math.floor(localMinutes / 60);
+        let lm = localMinutes % 60;
+        const localTimeStr = `${lh.toString().padStart(2, '0')}:${lm.toString().padStart(2, '0')}`;
 
-        if (g === "A") stadium1 = STADIUMS.find(s => s.name === "Estadio Azteca");
-        else if (g === "B") stadium1 = STADIUMS.find(s => s.name === "BMO Field");
-        else if (g === "D") stadium1 = STADIUMS.find(s => s.name === "SoFi Stadium");
-
-        const [t1, t2, t3, t4] = groupTeams;
-        const dates = GROUP_DATES[g];
-
-        const roundMatches = [
-            { home: t1, away: t2, date: dates[0], venue: stadium1 },
-            { home: t3, away: t4, date: dates[0], venue: stadium2 },
-            { home: t1, away: t3, date: dates[1], venue: stadium2 },
-            { home: t2, away: t4, date: dates[1], venue: stadium1 },
-            { home: t4, away: t1, date: dates[2], venue: stadium1 },
-            { home: t2, away: t3, date: dates[2], venue: stadium2 }
-        ];
-
-        roundMatches.forEach((m, rIdx) => {
-            const etTime = ET_TIMES[matchCounter % 4];
-            const etHour = parseInt(etTime.split(":")[0]);
-            const offset = CITY_UTC_OFFSETS[m.venue.city] || 4;
-            const localHour = etHour - (offset - 4);
-            const localTimeStr = `${localHour.toString().padStart(2, '0')}:00`;
-
-            appState.fixtures.push({
-                id: matchCounter,
-                group: g,
-                round: Math.floor(rIdx / 2) + 1,
-                home: m.home.id,
-                away: m.away.id,
-                homeScore: null,
-                awayScore: null,
-                date: m.date,
-                time: localTimeStr,
-                venue: m.venue.name + " (" + m.venue.city + ")"
-            });
-            matchCounter++;
+        appState.fixtures.push({
+            id: m.id,
+            group: homeTeam.group,
+            round: Math.floor(idx / 24) + 1,
+            home: m.home,
+            away: m.away,
+            homeScore: null,
+            awayScore: null,
+            date: m.date,
+            time: localTimeStr,
+            timeIST: m.timeIST,
+            venue: m.venue
         });
     });
 }
@@ -745,17 +798,20 @@ function renderFixtures() {
         const timeStr = m.time || ["12:00", "15:00", "18:00", "21:00"][m.id % 4];
         const formattedTime = ` @ ${timeStr} Local`;
 
-        const timeParts = timeStr.split(":");
-        const CITY_UTC_OFFSETS = {
-            "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
-            "Dallas": 5, "Houston": 5, "Kansas City": 5,
-            "New York/New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
-            "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
-        };
-        const matchCity = m.venue.match(/\(([^)]+)\)/);
-        const offset = (matchCity && CITY_UTC_OFFSETS[matchCity[1]]) ? CITY_UTC_OFFSETS[matchCity[1]] : 4;
-        const utcDate = new Date(Date.UTC(parseInt(m.date.substring(0,4)), parseInt(m.date.substring(5,7))-1, parseInt(m.date.substring(8,10)), parseInt(timeParts[0]) + offset, parseInt(timeParts[1])));
-        const istDisplay = utcDate.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }) + " IST";
+        let istDisplay = m.timeIST ? (m.timeIST + " IST") : "";
+        if (!istDisplay) {
+            const timeParts = timeStr.split(":");
+            const CITY_UTC_OFFSETS = {
+                "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
+                "Dallas": 5, "Houston": 5, "Kansas City": 5,
+                "New York/New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
+                "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
+            };
+            const matchCity = m.venue.match(/\(([^)]+)\)/);
+            const offset = (matchCity && CITY_UTC_OFFSETS[matchCity[1]]) ? CITY_UTC_OFFSETS[matchCity[1]] : 4;
+            const utcDate = new Date(Date.UTC(parseInt(m.date.substring(0,4)), parseInt(m.date.substring(5,7))-1, parseInt(m.date.substring(8,10)), parseInt(timeParts[0]) + offset, parseInt(timeParts[1])));
+            istDisplay = utcDate.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }) + " IST";
+        }
 
         const isSaved = m.homeScore != null && m.awayScore != null;
 
