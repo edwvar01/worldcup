@@ -612,13 +612,13 @@ function saveToLocalStorage() {
     if (dbRef) {
         dbRef.set(data);
     } else {
-        localStorage.setItem("fifa2026_simulator_state", JSON.stringify(data));
+        localStorage.setItem("fifa2026_simulator_state_v2", JSON.stringify(data));
     }
 }
 
 function loadFromLocalStorage() {
     if (!dbRef) {
-        const saved = localStorage.getItem("fifa2026_simulator_state");
+        const saved = localStorage.getItem("fifa2026_simulator_state_v2");
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -1419,7 +1419,7 @@ function handleStatClick(type) {
 
 // Sync across tabs if admin updates data
 window.addEventListener('storage', (e) => {
-    if (e.key === 'fifa2026_simulator_state') {
+    if (e.key === 'fifa2026_simulator_state_v2') {
         loadFromLocalStorage();
         calculateStandings(); // Ensure derivations are intact
         renderAll();
