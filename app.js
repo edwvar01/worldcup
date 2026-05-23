@@ -733,7 +733,15 @@ function renderFixtures() {
         const formattedTime = ` @ ${timeStr} Local`;
 
         const timeParts = timeStr.split(":");
-        const utcDate = new Date(Date.UTC(parseInt(m.date.substring(0,4)), parseInt(m.date.substring(5,7))-1, parseInt(m.date.substring(8,10)), parseInt(timeParts[0]) + 4, parseInt(timeParts[1])));
+        const CITY_UTC_OFFSETS = {
+            "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
+            "Dallas": 5, "Houston": 5, "Kansas City": 5,
+            "New York/New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
+            "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
+        };
+        const matchCity = m.venue.match(/\(([^)]+)\)/);
+        const offset = (matchCity && CITY_UTC_OFFSETS[matchCity[1]]) ? CITY_UTC_OFFSETS[matchCity[1]] : 4;
+        const utcDate = new Date(Date.UTC(parseInt(m.date.substring(0,4)), parseInt(m.date.substring(5,7))-1, parseInt(m.date.substring(8,10)), parseInt(timeParts[0]) + offset, parseInt(timeParts[1])));
         const istDisplay = utcDate.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }) + " IST";
 
         const isSaved = m.homeScore != null && m.awayScore != null;
