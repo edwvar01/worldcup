@@ -606,6 +606,7 @@ function resetAllPredictions() {
 // Storage Management (Firebase or Local fallback)
 function saveToLocalStorage() {
     const data = {
+        version: 2,
         fixtures: appState.fixtures,
         bracket: appState.bracket
     };
@@ -1332,6 +1333,11 @@ window.addEventListener("DOMContentLoaded", () => {
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data && data.fixtures) {
+                if (data.version !== 2) {
+                    console.log("Stale cloud data detected. Forcing cloud sync with local v2 fixtures.");
+                    saveToLocalStorage();
+                    return;
+                }
                 appState.fixtures = data.fixtures;
                 
                 if (data.bracket) {
