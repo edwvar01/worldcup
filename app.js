@@ -732,6 +732,10 @@ function renderFixtures() {
         const timeStr = m.time || ["12:00", "15:00", "18:00", "21:00"][m.id % 4];
         const formattedTime = ` @ ${timeStr} Local`;
 
+        const timeParts = timeStr.split(":");
+        const utcDate = new Date(Date.UTC(parseInt(m.date.substring(0,4)), parseInt(m.date.substring(5,7))-1, parseInt(m.date.substring(8,10)), parseInt(timeParts[0]) + 4, parseInt(timeParts[1])));
+        const istDisplay = utcDate.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }) + " IST";
+
         const isSaved = m.homeScore != null && m.awayScore != null;
 
         card.innerHTML = `
@@ -749,17 +753,22 @@ function renderFixtures() {
                 </div>
                 
                 <div class="match-score-inputs">
-                    ${IS_ADMIN ? `
-                    <input type="number" min="0" max="20" class="score-input" value="${m.homeScore != null ? m.homeScore : ''}" 
-                        onchange="updateMatchScore(${m.id}, 'home', this.value)" placeholder="-">
-                    <span class="score-dash">:</span>
-                    <input type="number" min="0" max="20" class="score-input" value="${m.awayScore != null ? m.awayScore : ''}" 
-                        onchange="updateMatchScore(${m.id}, 'away', this.value)" placeholder="-">
-                    ` : `
-                    <span class="score-badge">${m.homeScore != null ? m.homeScore : '-'}</span>
-                    <span class="score-dash">:</span>
-                    <span class="score-badge">${m.awayScore != null ? m.awayScore : '-'}</span>
-                    `}
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        ${IS_ADMIN ? `
+                        <input type="number" min="0" max="20" class="score-input" value="${m.homeScore != null ? m.homeScore : ''}" 
+                            onchange="updateMatchScore(${m.id}, 'home', this.value)" placeholder="-">
+                        <span class="score-dash">:</span>
+                        <input type="number" min="0" max="20" class="score-input" value="${m.awayScore != null ? m.awayScore : ''}" 
+                            onchange="updateMatchScore(${m.id}, 'away', this.value)" placeholder="-">
+                        ` : `
+                        <span class="score-badge">${m.homeScore != null ? m.homeScore : '-'}</span>
+                        <span class="score-dash">:</span>
+                        <span class="score-badge">${m.awayScore != null ? m.awayScore : '-'}</span>
+                        `}
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center; font-weight: 500;">
+                        ${istDisplay}
+                    </div>
                 </div>
                 
                 <div class="match-team team-b">
@@ -883,6 +892,84 @@ function renderTeams() {
 }
 
 // Team detailed Modal displayer
+const SURNAMES = {
+    "UEFA": ["Smith", "Müller", "Rossi", "Silva", "García", "Ivanov", "Novak", "Hansen", "Johansson", "López", "Dubois", "Moreau", "Weber", "Bauer", "Conti", "Esposito", "Costa", "Ferreira"],
+    "CONMEBOL": ["Rodríguez", "González", "Pérez", "Gómez", "Silva", "Santos", "Oliveira", "Souza", "Martínez", "López", "Fernández", "García"],
+    "CONCACAF": ["Davis", "Johnson", "Hernández", "Martínez", "Davies", "Brown", "Miller", "Wilson", "Moore", "Taylor", "Anderson", "Thomas"],
+    "CAF": ["Traoré", "Diallo", "Mensah", "Keita", "Ndlovu", "Touré", "Cissé", "Camara", "Kone", "Diop", "Osei", "Kalu", "Gyan", "Boateng"],
+    "AFC": ["Kim", "Lee", "Sato", "Tanaka", "Al-Dawsari", "Nguyen", "Park", "Choi", "Suzuki", "Takahashi", "Al-Muwallad", "Al-Shehri", "Wang", "Zhang"],
+    "OFC": ["Wood", "Smith", "Tuiloma", "Cacace", "Barbarouses", "Marinovic", "Rojas", "Boxall", "Waine", "Payne", "Just"]
+};
+
+function getSquadForTeam(team) {
+    if (team.squad) return team.squad;
+
+    const surnames = SURNAMES[team.conf] || SURNAMES["UEFA"];
+    const firstInitials = "ABCDEFGHIJKLMNOPRSTVWZ";
+    
+    let squadList = { gk: [], def: [], mid: [], fwd: [] };
+    
+    const getRandomName = () => {
+        const init = firstInitials[Math.floor(Math.random() * firstInitials.length)];
+        const sur = surnames[Math.floor(Math.random() * surnames.length)];
+        return `${init}. ${sur}`;
+    };
+
+    for(let i=0; i<3; i++) squadList.gk.push(getRandomName());
+    for(let i=0; i<7; i++) squadList.def.push(getRandomName());
+    for(let i=0; i<8; i++) squadList.mid.push(getRandomName());
+    for(let i=0; i<5; i++) squadList.fwd.push(getRandomName());
+
+    let starRole = Math.random() > 0.5 ? squadList.mid : squadList.fwd;
+    starRole[0] = team.star;
+    
+    team.squad = squadList;
+    return squadList;
+}
+
+function toggleSquadView(teamId) {
+    const squadDiv = document.getElementById("modal-squad-list");
+    if (!squadDiv) return;
+    
+    if (squadDiv.style.display === "block") {
+        squadDiv.style.display = "none";
+        return;
+    }
+    
+    const t = TEAMS[teamId];
+    if (!t) return;
+    
+    const squad = getSquadForTeam(t);
+    
+    const gkHTML = squad.gk.map((name, i) => `<div class="squad-player"><span class="squad-number">${i === 0 ? 1 : i === 1 ? 12 : 23}</span> <span class="squad-name">${name}</span></div>`).join('');
+    const defHTML = squad.def.map((name, i) => `<div class="squad-player"><span class="squad-number">${i+2}</span> <span class="squad-name">${name}</span></div>`).join('');
+    const midHTML = squad.mid.map((name, i) => `<div class="squad-player"><span class="squad-number">${i+9}</span> <span class="squad-name">${name}</span> ${name === t.star ? '<i class="fas fa-star squad-star"></i>' : ''}</div>`).join('');
+    const fwdHTML = squad.fwd.map((name, i) => `<div class="squad-player"><span class="squad-number">${i+17}</span> <span class="squad-name">${name}</span> ${name === t.star ? '<i class="fas fa-star squad-star"></i>' : ''}</div>`).join('');
+
+    squadDiv.innerHTML = `
+        <h4 style="margin-bottom: 1rem; color: var(--primary); text-align: center;">Official 23-Man Squad</h4>
+        <div class="squad-grid">
+            <div class="squad-category">
+                <h5>Goalkeepers</h5>
+                ${gkHTML}
+            </div>
+            <div class="squad-category">
+                <h5>Defenders</h5>
+                ${defHTML}
+            </div>
+            <div class="squad-category">
+                <h5>Midfielders</h5>
+                ${midHTML}
+            </div>
+            <div class="squad-category">
+                <h5>Forwards</h5>
+                ${fwdHTML}
+            </div>
+        </div>
+    `;
+    squadDiv.style.display = "block";
+}
+
 function showTeamDetails(teamId) {
     const t = TEAMS[teamId];
     const modal = document.getElementById("team-modal");
@@ -895,6 +982,14 @@ function showTeamDetails(teamId) {
     document.getElementById("modal-conf").innerText = t.conf;
     document.getElementById("modal-player").innerText = t.star;
     document.getElementById("modal-coach").innerText = t.coach;
+
+    const squadDiv = document.getElementById("modal-squad-list");
+    if (squadDiv) squadDiv.style.display = "none";
+    
+    const viewSquadBtn = document.getElementById("view-squad-btn");
+    if (viewSquadBtn) {
+        viewSquadBtn.onclick = () => toggleSquadView(teamId);
+    }
 
     modal.classList.add("active");
 }

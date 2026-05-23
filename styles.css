@@ -1283,3 +1283,54 @@ main {
         transform-origin: top center;
     }
 }
+
+/* Squad View Styles */
+.squad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+@media (max-width: 600px) {
+    .squad-grid { grid-template-columns: 1fr; }
+}
+.squad-category {
+    background: rgba(255,255,255,0.03);
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.squad-category h5 {
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.squad-player {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+.squad-name {
+    flex: 1;
+}
+.squad-number {
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+.squad-star {
+    color: #fbbf24;
+    font-size: 0.8rem;
+}
