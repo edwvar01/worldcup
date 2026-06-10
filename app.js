@@ -765,7 +765,7 @@ function renderAll() {
 // Countdown timer renderer
 function renderCountdown() {
     // June 11, 2026 15:00:00 (Local/Opening ceremony)
-    const openingDate = new Date("2026-06-11T15:00:00").getTime();
+    const openingDate = new Date("2026-06-11T12:30:00").getTime();
     
     const updateCountdown = () => {
         const now = new Date().getTime();
