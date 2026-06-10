@@ -198,6 +198,8 @@ let appState = {
         sf: Array(2).fill(null).map(() => ({ home: null, away: null, homeScore: null, awayScore: null, winner: null })),
         final: { home: null, away: null, homeScore: null, awayScore: null, winner: null }
     },
+    standingsOverrides: {},
+    bracketOverrides: { r32: {}, r16: {}, qf: {}, sf: {}, final: {} },
     hostFilterOnly: false,
     gallery: []
 };
@@ -387,6 +389,17 @@ function calculateStandings() {
         }
     });
 
+    // Apply Manual Overrides
+    if (appState.standingsOverrides) {
+        Object.keys(appState.standings).forEach(g => {
+            appState.standings[g].forEach(t => {
+                if (appState.standingsOverrides[t.id]) {
+                    Object.assign(t, appState.standingsOverrides[t.id]);
+                }
+            });
+        });
+    }
+
     // Sort groups
     const groups = Object.keys(appState.standings);
     groups.forEach(g => {
@@ -558,6 +571,9 @@ function syncBracketProgression() {
 function updateKnockoutScore(round, matchIdx, side, value) {
     let match = round === 'final' ? appState.bracket.final : appState.bracket[round][matchIdx];
     
+    const currentHome = appState.bracketOverrides?.[round]?.[matchIdx]?.home || match.home;
+    const currentAway = appState.bracketOverrides?.[round]?.[matchIdx]?.away || match.away;
+    
     if (value === "") {
         if (side === "home") match.homeScore = null;
         else match.awayScore = null;
@@ -568,8 +584,8 @@ function updateKnockoutScore(round, matchIdx, side, value) {
     }
     
     if (match.homeScore != null && match.awayScore != null) {
-        if (match.homeScore > match.awayScore) match.winner = match.home;
-        else if (match.awayScore > match.homeScore) match.winner = match.away;
+        if (match.homeScore > match.awayScore) match.winner = currentHome;
+        else if (match.awayScore > match.homeScore) match.winner = currentAway;
         else match.winner = null;
         
         if (round === 'final' && match.winner) triggerCelebration(match.winner);
@@ -580,6 +596,35 @@ function updateKnockoutScore(round, matchIdx, side, value) {
 
     syncBracketProgression();
     saveToLocalStorage();
+}
+
+function updateKnockoutTeam(round, matchIdx, side, teamId) {
+    if (!appState.bracketOverrides) appState.bracketOverrides = { r32: {}, r16: {}, qf: {}, sf: {}, final: {} };
+    if (!appState.bracketOverrides[round]) appState.bracketOverrides[round] = {};
+    if (!appState.bracketOverrides[round][matchIdx]) appState.bracketOverrides[round][matchIdx] = {};
+    
+    if (teamId === "") {
+        appState.bracketOverrides[round][matchIdx][side] = null;
+    } else {
+        appState.bracketOverrides[round][matchIdx][side] = teamId;
+    }
+    
+    // Re-evaluate winner based on the new team
+    let match = round === 'final' ? appState.bracket.final : appState.bracket[round][matchIdx];
+    const currentHome = appState.bracketOverrides?.[round]?.[matchIdx]?.home || match.home;
+    const currentAway = appState.bracketOverrides?.[round]?.[matchIdx]?.away || match.away;
+    
+    if (match.homeScore != null && match.awayScore != null) {
+        if (match.homeScore > match.awayScore) match.winner = currentHome;
+        else if (match.awayScore > match.homeScore) match.winner = currentAway;
+        else match.winner = null;
+    } else {
+        match.winner = null;
+    }
+    
+    syncBracketProgression();
+    saveToLocalStorage();
+    renderBracket();
 }
 
 // Smart Soccer Match Simulator (Poisson/Custom realistic distribution)
@@ -680,7 +725,9 @@ function saveToLocalStorage() {
     const data = {
         version: 2,
         fixtures: appState.fixtures,
-        bracket: appState.bracket
+        bracket: appState.bracket,
+        standingsOverrides: appState.standingsOverrides,
+        bracketOverrides: appState.bracketOverrides
     };
     if (dbRef) {
         dbRef.set(data);
@@ -698,6 +745,8 @@ function loadFromLocalStorage() {
                 if (parsed.fixtures && parsed.bracket) {
                     appState.fixtures = parsed.fixtures;
                     appState.bracket = parsed.bracket;
+                    if (parsed.standingsOverrides) appState.standingsOverrides = parsed.standingsOverrides;
+                    if (parsed.bracketOverrides) appState.bracketOverrides = parsed.bracketOverrides;
                 }
             } catch (e) {}
         }
@@ -1163,22 +1212,34 @@ function renderBracket() {
 
     // Helper to generate a team slot HTML
     const getSlotHtml = (m, side, round, matchIdx) => {
-        const teamId = side === 'home' ? m.home : m.away;
+        const overridenTeamId = appState.bracketOverrides?.[round]?.[matchIdx]?.[side];
+        const teamId = overridenTeamId || (side === 'home' ? m.home : m.away);
         const score = side === 'home' ? m.homeScore : m.awayScore;
         
-        if (!teamId) {
+        let teamSelectHtml = "";
+        if (IS_ADMIN) {
+            teamSelectHtml = `<select class="bracket-team-select" style="background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px; max-width: 90px; font-size: 0.8rem;" onchange="updateKnockoutTeam('${round}', '${matchIdx}', '${side}', this.value)">`;
+            teamSelectHtml += `<option value="">TBD</option>`;
+            Object.values(TEAMS).sort((a,b)=>a.name.localeCompare(b.name)).forEach(tm => {
+                teamSelectHtml += `<option value="${tm.id}" ${tm.id === teamId ? 'selected' : ''}>${tm.name}</option>`;
+            });
+            teamSelectHtml += `</select>`;
+        }
+
+        if (!teamId && !IS_ADMIN) {
             return `<div class="bracket-team-slot empty">TBD</div>`;
         }
-        const t = TEAMS[teamId];
+        
+        const t = teamId ? TEAMS[teamId] : null;
         let slotClass = "bracket-team-slot";
-        if (m.winner === teamId) slotClass += " winner";
+        if (m.winner !== null && m.winner === teamId) slotClass += " winner";
         if (m.winner !== null && m.winner !== teamId) slotClass += " loser";
 
         return `
             <div class="${slotClass}" style="display: flex; justify-content: space-between; align-items: center; padding-right: 0.5rem;">
                 <div class="bracket-team-info">
-                    <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
-                    <span>${t.name}</span>
+                    ${t ? `<img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">` : '<div class="flag-icon" style="background: rgba(255,255,255,0.1); width: 20px; height: 14px; border-radius: 2px;"></div>'}
+                    ${IS_ADMIN ? teamSelectHtml : `<span>${t.name}</span>`}
                 </div>
                 ${IS_ADMIN ? `
                 <input type="number" min="0" max="20" class="score-input knockout-score-input" 
@@ -1430,6 +1491,8 @@ window.addEventListener("DOMContentLoaded", () => {
                         appState.bracket.final = { ...appState.bracket.final, ...data.bracket.final };
                     }
                 }
+                if (data.standingsOverrides) appState.standingsOverrides = data.standingsOverrides;
+                if (data.bracketOverrides) appState.bracketOverrides = data.bracketOverrides;
             }
             calculateStandings();
             
@@ -1708,4 +1771,22 @@ async function deleteGalleryItem(id) {
         console.error("Error deleting gallery item:", err);
         alert("Failed to delete item.");
     }
+}
+
+function updateStandingsOverride(teamId, field, value) {
+    if (!appState.standingsOverrides) appState.standingsOverrides = {};
+    if (!appState.standingsOverrides[teamId]) appState.standingsOverrides[teamId] = {};
+    
+    if (value === "") {
+        delete appState.standingsOverrides[teamId][field];
+        // If empty, clean up
+        if (Object.keys(appState.standingsOverrides[teamId]).length === 0) {
+            delete appState.standingsOverrides[teamId];
+        }
+    } else {
+        appState.standingsOverrides[teamId][field] = parseInt(value);
+    }
+    
+    calculateStandings();
+    saveToLocalStorage();
 }
