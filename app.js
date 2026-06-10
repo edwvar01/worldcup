@@ -1610,22 +1610,23 @@ function renderGallery() {
         return;
     }
     
+    let html = "";
     appState.gallery.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "glass-card";
-        card.style.overflow = "hidden";
-        card.style.display = "flex";
-        card.style.flexDirection = "column";
-        
-        card.innerHTML = `
-            <img src="${item.url}" alt="${item.caption || 'Gallery Image'}" style="width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid var(--border-color);">
-            <div style="padding: 1rem;">
-                <p style="color: var(--text-main); font-size: 0.95rem;">${item.caption || 'World Cup 2026 Moment'}</p>
-                <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.5rem;">${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : ''}</p>
+        const dateStr = new Date(item.timestamp).toLocaleDateString();
+        // Pass the data cleanly avoiding quote issues
+        const safeUrl = item.url.replace(/'/g, "\\'");
+        const safeCaption = (item.caption || '').replace(/'/g, "\\'");
+        html += `
+            <div class="glass-card" style="border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease;" onclick="openGalleryModal('${safeUrl}', '${safeCaption}', '${dateStr}')" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="${item.url}" alt="Gallery Image" style="width: 100%; height: 200px; object-fit: cover;">
+                <div style="padding: 1rem;">
+                    <p style="font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem;">${item.caption || 'World Cup 2026 Moment'}</p>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</p>
+                </div>
             </div>
         `;
-        container.appendChild(card);
     });
+    container.innerHTML = html;
 }
 
 function renderAdminGallery() {
@@ -1640,26 +1641,25 @@ function renderAdminGallery() {
         </div>`;
         return;
     }
-    
+    let html = "";
     appState.gallery.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "glass-card";
-        card.style.overflow = "hidden";
-        card.style.display = "flex";
-        card.style.flexDirection = "column";
-        card.style.position = "relative";
-        
-        card.innerHTML = `
-            <img src="${item.url}" alt="${item.caption || 'Gallery Image'}" style="width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid var(--border-color);">
-            <div style="padding: 1rem;">
-                <p style="color: var(--text-main); font-size: 0.85rem; margin-bottom: 0.5rem;">${item.caption || 'No caption'}</p>
-                <button class="btn" style="background: rgba(239, 68, 68, 0.1); color: var(--accent); border: 1px solid rgba(239, 68, 68, 0.2); width: 100%; justify-content: center; font-size: 0.8rem; padding: 0.4rem;" onclick="deleteGalleryItem('${item.id}', '${item.storagePath || ''}')">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
+        const dateStr = new Date(item.timestamp).toLocaleDateString();
+        const safeUrl = item.url.replace(/'/g, "\\'");
+        const safeCaption = (item.caption || '').replace(/'/g, "\\'");
+        html += `
+            <div class="glass-card" style="border-radius: 8px; overflow: hidden; position: relative;">
+                <div style="cursor: pointer;" onclick="openGalleryModal('${safeUrl}', '${safeCaption}', '${dateStr}')">
+                    <img src="${item.url}" alt="Gallery Image" style="width: 100%; height: 180px; object-fit: cover;">
+                    <div style="padding: 1rem; padding-bottom: 3.5rem;">
+                        <p style="font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem;">${item.caption}</p>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</p>
+                    </div>
+                </div>
+                <button onclick="deleteGalleryItem('${item.id}')" style="position: absolute; bottom: 0.5rem; right: 0.5rem; background: rgba(220, 53, 69, 0.8); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;"><i class="fas fa-trash-alt"></i> Delete</button>
             </div>
         `;
-        container.appendChild(card);
     });
+    container.innerHTML = html;
 }
 
 async function uploadToGallery() {
@@ -1789,4 +1789,29 @@ function updateStandingsOverride(teamId, field, value) {
     
     calculateStandings();
     saveToLocalStorage();
+}
+
+function openGalleryModal(url, caption, date) {
+    const modal = document.getElementById("gallery-modal");
+    if (!modal) return;
+    
+    document.getElementById("gallery-modal-img").src = url;
+    document.getElementById("gallery-modal-caption").innerText = caption;
+    document.getElementById("gallery-modal-date").innerText = date;
+    
+    modal.style.display = "flex";
+    // Slight delay to allow display flex to apply before adding opacity class
+    setTimeout(() => {
+        modal.classList.add("active");
+    }, 10);
+}
+
+function closeGalleryModal() {
+    const modal = document.getElementById("gallery-modal");
+    if (modal) {
+        modal.classList.remove("active");
+        setTimeout(() => {
+            modal.style.display = "none";
+        }, 300); // Wait for transition
+    }
 }
