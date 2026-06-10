@@ -28,12 +28,9 @@ const firebaseConfig = {
 };
 
 let dbRef = null;
-let storageRef = null;
 if (firebaseConfig.apiKey) {
     firebase.initializeApp(firebaseConfig);
     dbRef = firebase.database().ref('worldcup-state');
-    storageRef = firebase.storage().ref();
-    firebase.storage().setMaxUploadRetryTime(5000); // Fail fast instead of hanging on CORS/Rules issues
     
     // Auto-seed admin credentials if they don't exist
     firebase.database().ref('admin-credentials').once('value').then(snap => {
@@ -1618,7 +1615,7 @@ async function uploadToGallery() {
     const file = fileInput.files[0];
     const caption = captionInput.value.trim();
     
-    if (!storageRef || !dbRef) {
+    if (!dbRef) {
         statusEl.innerText = "Firebase not fully initialized.";
         statusEl.style.color = "var(--accent)";
         statusEl.style.display = "block";
@@ -1627,20 +1624,53 @@ async function uploadToGallery() {
     
     try {
         btn.disabled = true;
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading...`;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
         statusEl.style.display = "none";
         
-        // Upload to Storage
-        const storagePath = `gallery/${Date.now()}_${file.name}`;
-        const fileRef = storageRef.child(storagePath);
-        const snapshot = await fileRef.put(file);
-        const downloadURL = await snapshot.ref.getDownloadURL();
+        // Read and compress image using Canvas
+        const base64Image = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Compress to JPEG with 0.7 quality
+                    resolve(canvas.toDataURL("image/jpeg", 0.7));
+                };
+                img.onerror = err => reject(err);
+            };
+            reader.onerror = error => reject(error);
+        });
+        
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading...`;
         
         // Save to Database
         const newGalleryRef = firebase.database().ref('gallery').push();
         await newGalleryRef.set({
-            url: downloadURL,
-            storagePath: storagePath,
+            url: base64Image,
             caption: caption,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
@@ -1659,7 +1689,7 @@ async function uploadToGallery() {
         
     } catch (err) {
         console.error("Upload error:", err);
-        statusEl.innerText = "Error: Check Firebase Storage Rules & CORS, or network.";
+        statusEl.innerText = "Error: Failed to process or upload image.";
         statusEl.style.color = "var(--accent)";
         statusEl.style.display = "block";
     } finally {
@@ -1668,15 +1698,11 @@ async function uploadToGallery() {
     }
 }
 
-async function deleteGalleryItem(id, storagePath) {
+async function deleteGalleryItem(id) {
     if (!confirm("Are you sure you want to delete this photo?")) return;
     
     try {
-        // Delete from Storage if storagePath exists
-        if (storagePath && storageRef) {
-            await storageRef.child(storagePath).delete().catch(err => console.warn("Storage delete err (might be missing):", err));
-        }
-        // Delete from DB
+        // Delete from DB only
         await firebase.database().ref(`gallery/${id}`).remove();
     } catch (err) {
         console.error("Error deleting gallery item:", err);
