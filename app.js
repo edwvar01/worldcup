@@ -33,6 +33,7 @@ if (firebaseConfig.apiKey) {
     firebase.initializeApp(firebaseConfig);
     dbRef = firebase.database().ref('worldcup-state');
     storageRef = firebase.storage().ref();
+    firebase.storage().setMaxUploadRetryTime(5000); // Fail fast instead of hanging on CORS/Rules issues
     
     // Auto-seed admin credentials if they don't exist
     firebase.database().ref('admin-credentials').once('value').then(snap => {
@@ -1658,7 +1659,7 @@ async function uploadToGallery() {
         
     } catch (err) {
         console.error("Upload error:", err);
-        statusEl.innerText = "Error uploading. Check console.";
+        statusEl.innerText = "Error: Check Firebase Storage Rules & CORS, or network.";
         statusEl.style.color = "var(--accent)";
         statusEl.style.display = "block";
     } finally {
