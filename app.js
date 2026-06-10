@@ -1619,8 +1619,8 @@ function renderGallery() {
         html += `
             <div class="glass-card" style="border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease;" onclick="openGalleryModal('${safeUrl}', '${safeCaption}', '${dateStr}')" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                 <img src="${item.url}" alt="Gallery Image" style="width: 100%; height: 200px; object-fit: cover;">
-                <div style="padding: 1rem;">
-                    <p style="font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem;">${item.caption || 'World Cup 2026 Moment'}</p>
+                <div style="padding: 1rem; width: 100%; box-sizing: border-box; overflow: hidden;">
+                    <p style="font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem; width: 100%; display: block;">${item.caption || 'World Cup 2026 Moment'}</p>
                     <p style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</p>
                 </div>
             </div>
@@ -1650,8 +1650,8 @@ function renderAdminGallery() {
             <div class="glass-card" style="border-radius: 8px; overflow: hidden; position: relative;">
                 <div style="cursor: pointer;" onclick="openGalleryModal('${safeUrl}', '${safeCaption}', '${dateStr}')">
                     <img src="${item.url}" alt="Gallery Image" style="width: 100%; height: 180px; object-fit: cover;">
-                    <div style="padding: 1rem; padding-bottom: 3.5rem;">
-                        <p style="font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem;">${item.caption}</p>
+                    <div style="padding: 1rem; padding-bottom: 3.5rem; width: 100%; box-sizing: border-box; overflow: hidden;">
+                        <p style="font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem; width: 100%; display: block;">${item.caption}</p>
                         <p style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</p>
                     </div>
                 </div>
