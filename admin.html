@@ -71,6 +71,9 @@
                 <button class="nav-tab" onclick="switchTab('bracket')">
                     <i class="fas fa-sitemap"></i> Tournament Bracket
                 </button>
+                <button class="nav-tab" onclick="switchTab('gallery')">
+                    <i class="fas fa-images"></i> Manage Gallery
+                </button>
             </nav>
             
             <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
@@ -424,6 +427,44 @@
             </div>
         </section>
 
+        <!-- 6. GALLERY ADMIN TAB -->
+        <section id="gallery" class="tab-content">
+            <div style="margin-bottom: 2rem;">
+                <h2 class="section-title">Manage <span>Photo Gallery</span></h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+                    Upload new photos to the public gallery, add captions, or remove existing photos.
+                </p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Upload Form Panel -->
+                <div class="glass-panel sidebar-panel" style="display: flex; flex-direction: column; gap: 1rem; align-self: start;">
+                    <h3>Upload New Photo</h3>
+                    <div>
+                        <label style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block;">Select Image</label>
+                        <input type="file" id="gallery-file" accept="image/*" class="search-input" style="width: 100%; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block;">Caption</label>
+                        <input type="text" id="gallery-caption" class="search-input" style="width: 100%; border-radius: 8px;" placeholder="Describe the moment...">
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadToGallery()" id="upload-btn" style="justify-content: center; margin-top: 0.5rem;">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload to Gallery
+                    </button>
+                    <div id="upload-status" style="color: var(--text-muted); font-size: 0.85rem; display: none; text-align: center; margin-top: 0.5rem;"></div>
+                </div>
+
+                <!-- Gallery Grid -->
+                <div class="gallery-grid" id="admin-gallery-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+                    <!-- Injected dynamically by app.js -->
+                    <div class="glass-card" style="padding: 2rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary);"></i>
+                        <p>Loading gallery items...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- FLOATING POPUP TEAM DETAIL MODAL -->
@@ -470,6 +511,7 @@
     <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

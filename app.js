@@ -28,9 +28,11 @@ const firebaseConfig = {
 };
 
 let dbRef = null;
+let storageRef = null;
 if (firebaseConfig.apiKey) {
     firebase.initializeApp(firebaseConfig);
     dbRef = firebase.database().ref('worldcup-state');
+    storageRef = firebase.storage().ref();
     
     // Auto-seed admin credentials if they don't exist
     firebase.database().ref('admin-credentials').once('value').then(snap => {
@@ -198,7 +200,8 @@ let appState = {
         sf: Array(2).fill(null).map(() => ({ home: null, away: null, homeScore: null, awayScore: null, winner: null })),
         final: { home: null, away: null, homeScore: null, awayScore: null, winner: null }
     },
-    hostFilterOnly: false
+    hostFilterOnly: false,
+    gallery: []
 };
 
 // 2. Generate Group Fixtures (72 matches total)
@@ -1386,6 +1389,10 @@ function switchTab(tabId) {
     if (tabId === "fixtures") renderFixtures();
     if (tabId === "teams") renderTeams();
     if (tabId === "bracket") renderBracket();
+    if (tabId === "gallery") {
+        if (IS_ADMIN) renderAdminGallery();
+        else renderGallery();
+    }
 }
 
 // Mobile Menu Toggle
@@ -1442,6 +1449,27 @@ window.addEventListener("DOMContentLoaded", () => {
             } else {
                 renderFixtures();
                 renderBracket();
+            }
+        });
+        
+        // Gallery Sync
+        firebase.database().ref('gallery').on('value', (snapshot) => {
+            const data = snapshot.val();
+            appState.gallery = [];
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    appState.gallery.push({
+                        id: key,
+                        ...data[key]
+                    });
+                });
+                // Sort by timestamp descending
+                appState.gallery.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            }
+            if (IS_ADMIN) {
+                renderAdminGallery();
+            } else {
+                renderGallery();
             }
         });
     } else {
@@ -1502,3 +1530,155 @@ window.addEventListener('storage', (e) => {
         renderAll();
     }
 });
+
+// ------------------------------
+// Gallery Functions
+// ------------------------------
+
+function renderGallery() {
+    const container = document.getElementById("gallery-grid-container");
+    if (!container) return;
+    
+    container.innerHTML = "";
+    
+    if (!appState.gallery || appState.gallery.length === 0) {
+        container.innerHTML = `<div class="glass-card" style="padding: 3rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+            <i class="fas fa-images" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-muted); opacity: 0.5;"></i>
+            <p>No photos have been uploaded yet.</p>
+        </div>`;
+        return;
+    }
+    
+    appState.gallery.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "glass-card";
+        card.style.overflow = "hidden";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        
+        card.innerHTML = `
+            <img src="${item.url}" alt="${item.caption || 'Gallery Image'}" style="width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid var(--border-color);">
+            <div style="padding: 1rem;">
+                <p style="color: var(--text-main); font-size: 0.95rem;">${item.caption || 'World Cup 2026 Moment'}</p>
+                <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.5rem;">${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : ''}</p>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function renderAdminGallery() {
+    const container = document.getElementById("admin-gallery-grid-container");
+    if (!container) return;
+    
+    container.innerHTML = "";
+    
+    if (!appState.gallery || appState.gallery.length === 0) {
+        container.innerHTML = `<div class="glass-card" style="padding: 3rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+            <p>No photos uploaded yet.</p>
+        </div>`;
+        return;
+    }
+    
+    appState.gallery.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "glass-card";
+        card.style.overflow = "hidden";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.position = "relative";
+        
+        card.innerHTML = `
+            <img src="${item.url}" alt="${item.caption || 'Gallery Image'}" style="width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid var(--border-color);">
+            <div style="padding: 1rem;">
+                <p style="color: var(--text-main); font-size: 0.85rem; margin-bottom: 0.5rem;">${item.caption || 'No caption'}</p>
+                <button class="btn" style="background: rgba(239, 68, 68, 0.1); color: var(--accent); border: 1px solid rgba(239, 68, 68, 0.2); width: 100%; justify-content: center; font-size: 0.8rem; padding: 0.4rem;" onclick="deleteGalleryItem('${item.id}', '${item.storagePath || ''}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+async function uploadToGallery() {
+    const fileInput = document.getElementById("gallery-file");
+    const captionInput = document.getElementById("gallery-caption");
+    const statusEl = document.getElementById("upload-status");
+    const btn = document.getElementById("upload-btn");
+    
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        statusEl.innerText = "Please select an image first.";
+        statusEl.style.color = "var(--accent)";
+        statusEl.style.display = "block";
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    const caption = captionInput.value.trim();
+    
+    if (!storageRef || !dbRef) {
+        statusEl.innerText = "Firebase not fully initialized.";
+        statusEl.style.color = "var(--accent)";
+        statusEl.style.display = "block";
+        return;
+    }
+    
+    try {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading...`;
+        statusEl.style.display = "none";
+        
+        // Upload to Storage
+        const storagePath = \`gallery/\${Date.now()}_\${file.name}\`;
+        const fileRef = storageRef.child(storagePath);
+        const snapshot = await fileRef.put(file);
+        const downloadURL = await snapshot.ref.getDownloadURL();
+        
+        // Save to Database
+        const newGalleryRef = firebase.database().ref('gallery').push();
+        await newGalleryRef.set({
+            url: downloadURL,
+            storagePath: storagePath,
+            caption: caption,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        
+        // Reset form
+        fileInput.value = "";
+        captionInput.value = "";
+        
+        statusEl.innerText = "Upload successful!";
+        statusEl.style.color = "var(--primary)";
+        statusEl.style.display = "block";
+        
+        setTimeout(() => {
+            statusEl.style.display = "none";
+        }, 3000);
+        
+    } catch (err) {
+        console.error("Upload error:", err);
+        statusEl.innerText = "Error uploading. Check console.";
+        statusEl.style.color = "var(--accent)";
+        statusEl.style.display = "block";
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = \`<i class="fas fa-cloud-upload-alt"></i> Upload to Gallery\`;
+    }
+}
+
+async function deleteGalleryItem(id, storagePath) {
+    if (!confirm("Are you sure you want to delete this photo?")) return;
+    
+    try {
+        // Delete from Storage if storagePath exists
+        if (storagePath && storageRef) {
+            await storageRef.child(storagePath).delete().catch(err => console.warn("Storage delete err (might be missing):", err));
+        }
+        // Delete from DB
+        await firebase.database().ref(\`gallery/\${id}\`).remove();
+    } catch (err) {
+        console.error("Error deleting gallery item:", err);
+        alert("Failed to delete item.");
+    }
+}
