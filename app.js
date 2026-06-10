@@ -1,5 +1,19 @@
 // FIFA World Cup 2026 - Hub & Simulator Logic
-const IS_ADMIN = window.location.pathname.toLowerCase().includes('admin.html');
+let IS_ADMIN = false;
+
+if (window.location.pathname.toLowerCase().includes('admin.html')) {
+    if (sessionStorage.getItem('fifa2026_admin_auth') === 'true') {
+        IS_ADMIN = true;
+    } else {
+        document.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.getElementById("admin-login-overlay");
+            if (overlay) {
+                overlay.style.display = "flex";
+                overlay.classList.add("active");
+            }
+        });
+    }
+}
 
 // --- FIREBASE CONFIGURATION ---
 // PASTE YOUR FIREBASE CONFIG OBJECT HERE:
@@ -17,8 +31,65 @@ let dbRef = null;
 if (firebaseConfig.apiKey) {
     firebase.initializeApp(firebaseConfig);
     dbRef = firebase.database().ref('worldcup-state');
+    
+    // Auto-seed admin credentials if they don't exist
+    firebase.database().ref('admin-credentials').once('value').then(snap => {
+        if (!snap.exists()) {
+            firebase.database().ref('admin-credentials').set({
+                username: "admin",
+                password: "password123"
+            });
+            console.log("Admin credentials seeded in database.");
+        }
+    });
 }
 // ------------------------------
+
+// Admin Authentication Handler
+function attemptAdminLogin() {
+    const user = document.getElementById("admin-user").value;
+    const pass = document.getElementById("admin-pass").value;
+    const errorEl = document.getElementById("admin-login-error");
+    
+    if (!user || !pass) {
+        errorEl.innerText = "Please enter both username and password.";
+        errorEl.style.display = "block";
+        return;
+    }
+
+    if (!dbRef) {
+        // Fallback for local testing without Firebase
+        if (user === "admin" && pass === "admin") {
+            sessionStorage.setItem('fifa2026_admin_auth', 'true');
+            location.reload();
+        } else {
+            errorEl.innerText = "Invalid username or password.";
+            errorEl.style.display = "block";
+        }
+        return;
+    }
+
+    // Query Firebase for admin-credentials
+    firebase.database().ref('admin-credentials').once('value').then(snapshot => {
+        if (!snapshot.exists()) {
+            errorEl.innerText = "No credentials configured in database.";
+            errorEl.style.display = "block";
+            return;
+        }
+        const creds = snapshot.val();
+        if (creds.username === user && creds.password === pass) {
+            sessionStorage.setItem('fifa2026_admin_auth', 'true');
+            location.reload();
+        } else {
+            errorEl.innerText = "Invalid username or password.";
+            errorEl.style.display = "block";
+        }
+    }).catch(err => {
+        console.error("Login Error: ", err);
+        errorEl.innerText = "Error connecting to database.";
+        errorEl.style.display = "block";
+    });
+}
 
 // 1. Qualified Teams Dataset (48 Teams)
 const TEAMS = {
