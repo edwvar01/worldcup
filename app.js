@@ -1375,7 +1375,7 @@ function switchTab(tabId) {
     contents.forEach(c => c.classList.remove("active"));
 
     // Find trigger tab
-    const activeTab = Array.from(tabs).find(t => t.getAttribute("onclick").includes(tabId));
+    const activeTab = Array.from(tabs).find(t => t.hasAttribute("onclick") && t.getAttribute("onclick").includes(tabId));
     if (activeTab) activeTab.classList.add("active");
 
     const activeContent = document.getElementById(tabId);
@@ -1405,6 +1405,7 @@ function toggleMobileMenu() {
 window.addEventListener("DOMContentLoaded", () => {
     initFixtures();
     initStandings();
+    renderCountdown();
     
     if (dbRef) {
         // Use Firebase Realtime Sync
@@ -1435,7 +1436,6 @@ window.addEventListener("DOMContentLoaded", () => {
             calculateStandings();
             
             // Protect Admin focus from being stolen by live sync while typing
-            renderCountdown();
             renderGroups();
             renderTeams();
             

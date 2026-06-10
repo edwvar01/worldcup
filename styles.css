@@ -100,6 +100,8 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 .logo-area {
     display: flex;
@@ -151,6 +153,7 @@ header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 .nav-tab:hover {
     color: var(--text-main);
