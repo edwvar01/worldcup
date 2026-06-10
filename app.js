@@ -1630,7 +1630,7 @@ async function uploadToGallery() {
         statusEl.style.display = "none";
         
         // Upload to Storage
-        const storagePath = \`gallery/\${Date.now()}_\${file.name}\`;
+        const storagePath = `gallery/${Date.now()}_${file.name}`;
         const fileRef = storageRef.child(storagePath);
         const snapshot = await fileRef.put(file);
         const downloadURL = await snapshot.ref.getDownloadURL();
@@ -1663,7 +1663,7 @@ async function uploadToGallery() {
         statusEl.style.display = "block";
     } finally {
         btn.disabled = false;
-        btn.innerHTML = \`<i class="fas fa-cloud-upload-alt"></i> Upload to Gallery\`;
+        btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Upload to Gallery`;
     }
 }
 
@@ -1676,7 +1676,7 @@ async function deleteGalleryItem(id, storagePath) {
             await storageRef.child(storagePath).delete().catch(err => console.warn("Storage delete err (might be missing):", err));
         }
         // Delete from DB
-        await firebase.database().ref(\`gallery/\${id}\`).remove();
+        await firebase.database().ref(`gallery/${id}`).remove();
     } catch (err) {
         console.error("Error deleting gallery item:", err);
         alert("Failed to delete item.");
