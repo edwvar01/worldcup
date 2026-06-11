@@ -1815,3 +1815,20 @@ function closeGalleryModal() {
         }, 300); // Wait for transition
     }
 }
+
+// Bulk update team standings by admin
+function updateTeamStats(teamId, stats) {
+    if (!IS_ADMIN) {
+        console.warn("Only admins can override stats.");
+        return;
+    }
+    if (!appState.standingsOverrides) appState.standingsOverrides = {};
+    if (!appState.standingsOverrides[teamId]) appState.standingsOverrides[teamId] = {};
+    
+    Object.assign(appState.standingsOverrides[teamId], stats);
+    
+    calculateStandings();
+    saveToLocalStorage();
+    renderGroups();
+    console.log(`Updated stats for ${teamId}:`, stats);
+}
