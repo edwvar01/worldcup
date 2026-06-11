@@ -765,7 +765,7 @@ function renderAll() {
 // Countdown timer renderer
 function renderCountdown() {
     // June 11, 2026 15:00:00 (Local/Opening ceremony)
-    const openingDate = new Date("2026-06-12T12:30:00").getTime();
+    const openingDate = new Date("2026-06-12T00:30:00+05:30").getTime();
     
     const updateCountdown = () => {
         const now = new Date().getTime();
@@ -821,21 +821,39 @@ function renderGroups() {
             const is3rd = idx === 2;
             const rowClass = isTop2 ? "advancing-top2" : is3rd ? "advancing-3rd" : "";
             
-            rowsHtml += `
-                <tr class="${rowClass}">
-                    <td class="td-num" style="color: var(--text-muted); font-weight: bold;">${idx + 1}</td>
-                    <td class="td-team">
-                        <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
-                        <span>${t.name}</span>
-                    </td>
-                    <td class="td-num">${t.mp}</td>
-                    <td class="td-num" style="font-weight: bold;">${t.pts}</td>
-                    <td class="td-num">${t.w}</td>
-                    <td class="td-num">${t.d}</td>
-                    <td class="td-num">${t.l}</td>
-                    <td class="td-num">${t.gd >= 0 ? '+' + t.gd : t.gd}</td>
-                </tr>
-            `;
+            if (IS_ADMIN) {
+                rowsHtml += `
+                    <tr class="${rowClass}">
+                        <td class="td-num" style="color: var(--text-muted); font-weight: bold;">${idx + 1}</td>
+                        <td class="td-team">
+                            <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
+                            <span>${t.name}</span>
+                        </td>
+                        <td class="td-num"><input type="number" class="score-input" style="width: 40px; padding: 2px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" value="${t.mp}" onchange="updateStandingsOverride('${t.id}', 'mp', this.value)"></td>
+                        <td class="td-num" style="font-weight: bold;"><input type="number" class="score-input" style="width: 40px; padding: 2px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" value="${t.pts}" onchange="updateStandingsOverride('${t.id}', 'pts', this.value)"></td>
+                        <td class="td-num"><input type="number" class="score-input" style="width: 40px; padding: 2px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" value="${t.w}" onchange="updateStandingsOverride('${t.id}', 'w', this.value)"></td>
+                        <td class="td-num"><input type="number" class="score-input" style="width: 40px; padding: 2px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" value="${t.d}" onchange="updateStandingsOverride('${t.id}', 'd', this.value)"></td>
+                        <td class="td-num"><input type="number" class="score-input" style="width: 40px; padding: 2px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" value="${t.l}" onchange="updateStandingsOverride('${t.id}', 'l', this.value)"></td>
+                        <td class="td-num"><input type="number" class="score-input" style="width: 40px; padding: 2px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" value="${t.gd}" onchange="updateStandingsOverride('${t.id}', 'gd', this.value)"></td>
+                    </tr>
+                `;
+            } else {
+                rowsHtml += `
+                    <tr class="${rowClass}">
+                        <td class="td-num" style="color: var(--text-muted); font-weight: bold;">${idx + 1}</td>
+                        <td class="td-team">
+                            <img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">
+                            <span>${t.name}</span>
+                        </td>
+                        <td class="td-num">${t.mp}</td>
+                        <td class="td-num" style="font-weight: bold;">${t.pts}</td>
+                        <td class="td-num">${t.w}</td>
+                        <td class="td-num">${t.d}</td>
+                        <td class="td-num">${t.l}</td>
+                        <td class="td-num">${t.gd >= 0 ? '+' + t.gd : t.gd}</td>
+                    </tr>
+                `;
+            }
         });
 
         groupCard.innerHTML = `
@@ -1789,6 +1807,7 @@ function updateStandingsOverride(teamId, field, value) {
     
     calculateStandings();
     saveToLocalStorage();
+    renderGroups();
 }
 
 function openGalleryModal(url, caption, date) {
