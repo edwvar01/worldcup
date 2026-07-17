@@ -436,12 +436,14 @@
             
             <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
                 <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
-                            src="https://www.youtube.com/embed/live_stream?channel=UCpcTrCXblq78GZrTUTLWeBw" 
-                            title="FIFA World Cup Live Stream" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                    </iframe>
+                    <video id="viewer-remote-video" autoplay playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain;"></video>
+                    <div id="viewer-status-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; background: rgba(0,0,0,0.7); z-index: 10; font-family: var(--font-heading);">
+                        <div style="text-align: center;">
+                            <i class="fas fa-tv" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted);"></i>
+                            <p id="viewer-status-text">Stream offline or disconnected</p>
+                            <button id="btn-join-stream" class="btn btn-primary" style="margin: 1rem auto 0 auto;" onclick="joinStream()">Join Stream</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="stream-info" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div>

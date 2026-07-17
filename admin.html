@@ -483,20 +483,16 @@
             
             <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
                 <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
-                            src="https://www.youtube.com/embed/live_stream?channel=UCpcTrCXblq78GZrTUTLWeBw" 
-                            title="FIFA World Cup Live Stream" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                    </iframe>
+                    <video id="admin-local-video" autoplay muted style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain;"></video>
                 </div>
                 <div class="stream-info" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 0.5rem;">World Cup Final Match Live</h3>
+                        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 0.5rem;">World Cup Final Match Live (Admin Broadcast)</h3>
                         <p style="color: var(--text-muted);">Estadio Azteca, Mexico City</p>
                     </div>
-                    <div style="display: flex; gap: 1rem;">
-                        <button class="btn btn-primary" onclick="window.open('https://www.fifa.com', '_blank')"><i class="fas fa-external-link-alt"></i> Official Broadcaster</button>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span id="admin-viewer-count" style="color: var(--text-muted); font-weight: bold; margin-right: 1rem;"><i class="fas fa-users"></i> 0 Viewers</span>
+                        <button class="btn btn-primary" id="btn-start-broadcast" onclick="startAdminBroadcast()"><i class="fas fa-desktop"></i> Start Screen Share</button>
                     </div>
                 </div>
             </div>

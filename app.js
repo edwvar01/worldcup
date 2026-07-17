@@ -1851,3 +1851,207 @@ function updateTeamStats(teamId, stats) {
     renderGroups();
     console.log(`Updated stats for ${teamId}:`, stats);
 }
+
+// --- WEBRTC SCREEN SHARING LOGIC ---
+const ICE_SERVERS = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+    ]
+};
+
+let localScreenStream = null;
+let adminPeerConnections = {};
+let viewerPeerConnection = null;
+let viewerId = null;
+
+async function startAdminBroadcast() {
+    if (!IS_ADMIN) return;
+    try {
+        localScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        
+        const videoEl = document.getElementById("admin-local-video");
+        if (videoEl) videoEl.srcObject = localScreenStream;
+
+        const btn = document.getElementById("btn-start-broadcast");
+        if (btn) {
+            btn.innerHTML = `<i class="fas fa-stop-circle"></i> Stop Share`;
+            btn.onclick = stopAdminBroadcast;
+            btn.style.background = '#ef4444';
+            btn.style.boxShadow = '0 4px 15px rgba(239, 68, 68, 0.25)';
+        }
+
+        // Clear existing viewers
+        firebase.database().ref('webrtc/viewers').remove();
+        
+        // Mark stream as live
+        firebase.database().ref('webrtc/status').set('LIVE');
+
+        // Listen for new viewers requesting connection
+        firebase.database().ref('webrtc/viewers').on('child_added', handleNewViewer);
+
+        localScreenStream.getVideoTracks()[0].onended = stopAdminBroadcast;
+    } catch (err) {
+        console.error("Error sharing screen: ", err);
+        alert("Failed to capture screen: " + err.message);
+    }
+}
+
+function stopAdminBroadcast() {
+    if (localScreenStream) {
+        localScreenStream.getTracks().forEach(track => track.stop());
+        localScreenStream = null;
+    }
+    const videoEl = document.getElementById("admin-local-video");
+    if (videoEl) videoEl.srcObject = null;
+
+    const btn = document.getElementById("btn-start-broadcast");
+    if (btn) {
+        btn.innerHTML = `<i class="fas fa-desktop"></i> Start Screen Share`;
+        btn.onclick = startAdminBroadcast;
+        btn.style.background = '';
+        btn.style.boxShadow = '';
+    }
+
+    firebase.database().ref('webrtc/status').set('OFFLINE');
+    firebase.database().ref('webrtc/viewers').off('child_added', handleNewViewer);
+    firebase.database().ref('webrtc/viewers').remove();
+
+    Object.values(adminPeerConnections).forEach(pc => pc.close());
+    adminPeerConnections = {};
+    updateViewerCount();
+}
+
+async function handleNewViewer(snapshot) {
+    const vId = snapshot.key;
+    const request = snapshot.val();
+    if (!request || !request.requestConnect) return;
+
+    const pc = new RTCPeerConnection(ICE_SERVERS);
+    adminPeerConnections[vId] = pc;
+
+    // Add local stream tracks to PC
+    if (localScreenStream) {
+        localScreenStream.getTracks().forEach(track => pc.addTrack(track, localScreenStream));
+    }
+
+    pc.onicecandidate = event => {
+        if (event.candidate) {
+            firebase.database().ref(`webrtc/viewers/${vId}/candidates/admin`).push(event.candidate.toJSON());
+        }
+    };
+
+    pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
+            pc.close();
+            delete adminPeerConnections[vId];
+            updateViewerCount();
+        } else if (pc.connectionState === 'connected') {
+            updateViewerCount();
+        }
+    };
+
+    // Create offer
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    
+    // Send offer to viewer
+    await firebase.database().ref(`webrtc/viewers/${vId}/offer`).set({
+        type: offer.type,
+        sdp: offer.sdp
+    });
+
+    // Listen for viewer answer
+    firebase.database().ref(`webrtc/viewers/${vId}/answer`).on('value', async (snap) => {
+        const answer = snap.val();
+        if (answer && pc.signalingState !== 'stable') {
+            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+        }
+    });
+
+    // Listen for viewer ICE candidates
+    firebase.database().ref(`webrtc/viewers/${vId}/candidates/viewer`).on('child_added', async (snap) => {
+        const candidate = snap.val();
+        if (candidate) {
+            await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        }
+    });
+}
+
+function updateViewerCount() {
+    const count = Object.keys(adminPeerConnections).length;
+    const countEl = document.getElementById("admin-viewer-count");
+    if (countEl) {
+        countEl.innerHTML = `<i class="fas fa-users"></i> ${count} Viewers`;
+    }
+}
+
+// Viewer Logic
+async function joinStream() {
+    if (IS_ADMIN) return;
+
+    const statusEl = document.getElementById("viewer-status-text");
+    const overlayEl = document.getElementById("viewer-status-overlay");
+    const btn = document.getElementById("btn-join-stream");
+    
+    statusEl.innerText = "Connecting to broadcast...";
+    if (btn) btn.style.display = "none";
+
+    viewerId = 'viewer_' + Math.random().toString(36).substr(2, 9);
+    viewerPeerConnection = new RTCPeerConnection(ICE_SERVERS);
+
+    viewerPeerConnection.ontrack = event => {
+        const videoEl = document.getElementById("viewer-remote-video");
+        if (videoEl && event.streams && event.streams[0]) {
+            videoEl.srcObject = event.streams[0];
+            if (overlayEl) overlayEl.style.display = "none";
+        }
+    };
+
+    viewerPeerConnection.onicecandidate = event => {
+        if (event.candidate) {
+            firebase.database().ref(`webrtc/viewers/${viewerId}/candidates/viewer`).push(event.candidate.toJSON());
+        }
+    };
+    
+    viewerPeerConnection.onconnectionstatechange = () => {
+        if (viewerPeerConnection.connectionState === 'disconnected' || viewerPeerConnection.connectionState === 'failed') {
+            statusEl.innerText = "Stream disconnected";
+            if (btn) {
+                btn.style.display = "block";
+                btn.innerText = "Reconnect";
+            }
+            if (overlayEl) overlayEl.style.display = "flex";
+        }
+    };
+
+    // Request connect
+    await firebase.database().ref(`webrtc/viewers/${viewerId}`).set({
+        requestConnect: true,
+        timestamp: Date.now()
+    });
+
+    // Wait for offer from Admin
+    firebase.database().ref(`webrtc/viewers/${viewerId}/offer`).on('value', async (snap) => {
+        const offer = snap.val();
+        if (offer && (viewerPeerConnection.signalingState === 'have-local-offer' || viewerPeerConnection.signalingState === 'stable')) {
+            await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            
+            const answer = await viewerPeerConnection.createAnswer();
+            await viewerPeerConnection.setLocalDescription(answer);
+            
+            await firebase.database().ref(`webrtc/viewers/${viewerId}/answer`).set({
+                type: answer.type,
+                sdp: answer.sdp
+            });
+
+            // Listen for Admin ICE candidates
+            firebase.database().ref(`webrtc/viewers/${viewerId}/candidates/admin`).on('child_added', async (cSnap) => {
+                const candidate = cSnap.val();
+                if (candidate) {
+                    await viewerPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                }
+            });
+        }
+    });
+}
