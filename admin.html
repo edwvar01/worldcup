@@ -482,8 +482,10 @@
             </div>
             
             <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
-                <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    <video id="admin-local-video" autoplay muted style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain;"></video>
+                <div style="max-width: 800px; width: 100%; margin: 0 auto;">
+                    <div class="video-container" id="admin-video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <video id="admin-local-video" controls autoplay muted style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain;"></video>
+                    </div>
                 </div>
                 <div class="stream-info" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div>
@@ -492,6 +494,7 @@
                     </div>
                     <div style="display: flex; gap: 1rem; align-items: center;">
                         <span id="admin-viewer-count" style="color: var(--text-muted); font-weight: bold; margin-right: 1rem;"><i class="fas fa-users"></i> 0 Viewers</span>
+                        <button class="btn btn-primary" onclick="toggleFullScreen('admin-video-container')"><i class="fas fa-expand"></i> Full Screen</button>
                         <button class="btn btn-primary" id="btn-start-broadcast" onclick="startAdminBroadcast()"><i class="fas fa-desktop"></i> Start Screen Share</button>
                     </div>
                 </div>
