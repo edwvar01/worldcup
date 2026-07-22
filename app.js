@@ -781,7 +781,6 @@ function renderCountdown() {
         if (diff <= 0) {
             document.getElementById("countdown-box").innerHTML = `
                 <div class="hero-badge" style="background: var(--primary);">Tournament Live!</div>
-                <div class="countdown-label">⚽ FIFA World Cup 2026 is underway!</div>
             `;
             return;
         }
@@ -959,8 +958,6 @@ function renderFixtures() {
             <div class="match-info-left">
                 <span class="match-number">Match #${m.id}</span>
                 <span class="match-group-lbl">Group ${m.group} - Round ${m.round}</span>
-                <span class="match-meta-info">${formattedDate}${formattedTime}</span>
-                <span class="match-meta-info" style="font-style: italic;"><i class="fas fa-map-marker-alt"></i> ${m.venue}</span>
             </div>
             
             <div class="match-vs-area">
@@ -982,9 +979,6 @@ function renderFixtures() {
                         <span class="score-dash">:</span>
                         <span class="score-badge">${m.awayScore != null ? m.awayScore : '-'}</span>
                         `}
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center; font-weight: 500;">
-                        ${istDisplay}
                     </div>
                 </div>
                 

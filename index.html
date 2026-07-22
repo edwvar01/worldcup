@@ -22,8 +22,7 @@
             <a href="#" class="logo-area" onclick="switchTab('dashboard')">
                 <i class="fas fa-trophy logo-icon"></i>
                 <div style="display: flex; flex-direction: column;">
-                    <span class="logo-text">WORLD CUP 2026</span>
-                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">Canada,Mexico,US</span>
+                    <span class="logo-text">IEDC CEK</span>
                 </div>
                 <span class="logo-tag">48 Teams</span>
             </a>
@@ -39,17 +38,8 @@
                 <button class="nav-tab" onclick="switchTab('fixtures')">
                     <i class="fas fa-calendar-alt"></i> Match Fixtures
                 </button>
-                <button class="nav-tab" onclick="switchTab('teams')">
-                    <i class="fas fa-flag"></i> Teams Explorer
-                </button>
                 <button class="nav-tab" onclick="switchTab('bracket')">
                     <i class="fas fa-sitemap"></i> Tournament Bracket
-                </button>
-                <button class="nav-tab" onclick="switchTab('gallery')">
-                    <i class="fas fa-images"></i> Latest Updates
-                </button>
-                <button class="nav-tab" onclick="switchTab('livestream')">
-                    <i class="fas fa-tv"></i> Live Stream
                 </button>
             </nav>
             
@@ -73,12 +63,12 @@
                     
                     <!-- Hero Section -->
                     <div class="hero-card">
-                        <span class="hero-badge">Summer 2026</span>
-                        <h1 class="hero-title">The Tournament of <span>Generations</span></h1>
+                        <span class="hero-badge">July 2026</span>
+                        <h1 class="hero-title">E-Football <span>Tournament</span></h1>
                         <p class="hero-desc">
-                            Welcome to the ultimate fan tracker for the <strong>FIFA World Cup 2026</strong>. 
-                            Stretching across Canada, Mexico, and the United States from June 11 to July 19, 2026. 
-                            Simulate match fixtures, rank the top teams, forecast the knockout matches, and crown your world champion!
+                           IEDC CE Kidangoor eFootball Tournament 2026 is here! Gather your squad and step onto the pitch for an exciting battle of skill, teamwork, and determination. Every match is a chance to prove yourself and lead your team to glory.
+
+​Passion. Teamwork. Victory. This is your moment. Leave your mark on the game. 
                         </p>
                         
                         <!-- Hero Countdown -->
@@ -107,123 +97,6 @@
                         </div>
                     </div>
                     
-                    <!-- Quick Stats Rows -->
-                    <div class="stats-row">
-                        <div class="glass-card stat-card" onclick="handleStatClick('teams')" title="View all 48 qualified teams">
-                            <i class="fas fa-users stat-icon"></i>
-                            <div class="stat-value">48</div>
-                            <div class="stat-label">Qualified Teams</div>
-                        </div>
-                        <div class="glass-card stat-card" onclick="handleStatClick('fixtures')" title="View all 104 matches">
-                            <i class="fas fa-futbol stat-icon"></i>
-                            <div class="stat-value">104</div>
-                            <div class="stat-label">Match Fixtures</div>
-                        </div>
-                        <div class="glass-card stat-card" onclick="handleStatClick('hosts')" title="View host nations details">
-                            <i class="fas fa-globe-americas stat-icon"></i>
-                            <div class="stat-value">3</div>
-                            <div class="stat-label">Host Nations</div>
-                        </div>
-                        <div class="glass-card stat-card" onclick="handleStatClick('venues')" title="View 16 official host venues">
-                            <i class="fas fa-building stat-icon"></i>
-                            <div class="stat-value">16</div>
-                            <div class="stat-label">Elite Venues</div>
-                        </div>
-                    </div>
-
-                    <!-- Predictor Shortcut Promotion -->
-                    <div class="glass-panel" style="padding: 2rem; display: flex; gap: 1.5rem; align-items: center; border-color: rgba(16,185,129,0.2);">
-                        <i class="fas fa-sitemap" style="font-size: 3rem; color: var(--primary);"></i>
-                        <div>
-                            <h3 style="font-family: var(--font-heading); margin-bottom: 0.5rem; font-size: 1.3rem;">Predict the Tournament</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
-                                Fill in scores to automatically compute standings and watch teams advance through the knockout brackets.
-                            </p>
-                            <div class="controls-row">
-                                <button class="btn btn-primary" onclick="switchTab('groups')">
-                                    <i class="fas fa-play"></i> Get Started
-                                </button>
-                                <button class="btn" onclick="switchTab('bracket')">
-                                    <i class="fas fa-sitemap"></i> View Bracket
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Right Sidebar Panel -->
-                <div class="info-sidebar">
-                    <!-- News ticker -->
-                    <div class="glass-panel sidebar-panel">
-                        <h3>Latest Updates</h3>
-                        
-                        <div class="news-item">
-                            <span class="news-tag">Breaking</span>
-                            <h4 class="news-title">Final 23-Man Squads Announced for All 48 Teams</h4>
-                            <p class="news-time"><i class="far fa-clock"></i> May 23, 2026</p>
-                        </div>
-                        
-                        <div class="news-item">
-                            <span class="news-tag">Build-up</span>
-                            <h4 class="news-title">Opening Ceremony Performers Revealed for Estadio Azteca</h4>
-                            <p class="news-time"><i class="far fa-clock"></i> May 22, 2026</p>
-                        </div>
-                        
-                        <div class="news-item">
-                            <span class="news-tag">Tournament</span>
-                            <h4 class="news-title">VAR and Offside Technology Enhancements Approved</h4>
-                            <p class="news-time"><i class="far fa-clock"></i> May 21, 2026</p>
-                        </div>
-                    </div>
-
-                    <!-- Stadiums Mini List -->
-                    <div class="glass-panel sidebar-panel">
-                        <h3>Tournament Venues</h3>
-                        <div class="stadium-mini-list">
-                            <div class="stadium-mini-item">
-                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
-                                <div class="stadium-mini-info">
-                                    <h4>Estadio Azteca</h4>
-                                    <p>Mexico City, Mexico (87,523 cap)</p>
-                                </div>
-                            </div>
-                            <div class="stadium-mini-item">
-                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
-                                <div class="stadium-mini-info">
-                                    <h4>MetLife Stadium</h4>
-                                    <p>New York/New Jersey, USA (82,500 cap)</p>
-                                </div>
-                            </div>
-                            <div class="stadium-mini-item">
-                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
-                                <div class="stadium-mini-info">
-                                    <h4>AT&T Stadium</h4>
-                                    <p>Dallas, USA (80,000 cap)</p>
-                                </div>
-                            </div>
-                            <div class="stadium-mini-item">
-                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
-                                <div class="stadium-mini-info">
-                                    <h4>SoFi Stadium</h4>
-                                    <p>Los Angeles, USA (70,240 cap)</p>
-                                </div>
-                            </div>
-                            <div class="stadium-mini-item">
-                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
-                                <div class="stadium-mini-info">
-                                    <h4>BMO Field</h4>
-                                    <p>Toronto, Canada (45,000 cap)</p>
-                                </div>
-                            </div>
-                            <div class="stadium-mini-item">
-                                <div class="stadium-mini-icon"><i class="fas fa-landmark"></i></div>
-                                <div class="stadium-mini-info">
-                                    <h4>BC Place</h4>
-                                    <p>Vancouver, Canada (54,500 cap)</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -309,38 +182,7 @@
             </div>
         </section>
 
-        <!-- 4. TEAMS EXPLORER TAB -->
-        <section id="teams" class="tab-content">
-            <div style="margin-bottom: 2rem;">
-                <h2 class="section-title">Qualified <span>Teams Explorer</span></h2>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                    Browse details of the 48 participating countries. Click a team's card to view their roster details, FIFA Rank, and key player.
-                </p>
-            </div>
 
-            <!-- Filters Bar -->
-            <div class="glass-panel filters-bar">
-                <div class="search-input-wrap" style="flex: 3;">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="team-search" class="search-input" onkeyup="renderTeams()" placeholder="Search team by name or code...">
-                </div>
-                
-                <select id="team-conf-filter" class="select-filter" onchange="renderTeams()">
-                    <option value="all">All Confederations</option>
-                    <option value="UEFA">UEFA (Europe)</option>
-                    <option value="CONMEBOL">CONMEBOL (South America)</option>
-                    <option value="CONCACAF">CONCACAF (North America)</option>
-                    <option value="AFC">AFC (Asia)</option>
-                    <option value="CAF">CAF (Africa)</option>
-                    <option value="OFC">OFC (Oceania)</option>
-                </select>
-            </div>
-
-            <!-- Teams Card Grid -->
-            <div class="teams-grid" id="teams-grid-container">
-                <!-- Injected dynamically by app.js -->
-            </div>
-        </section>
 
         <!-- 5. TOURNAMENT BRACKET TAB -->
         <section id="bracket" class="tab-content">
@@ -402,116 +244,11 @@
             </div>
         </section>
 
-        <!-- 6. GALLERY TAB -->
-        <section id="gallery" class="tab-content">
-            <div style="margin-bottom: 2rem;">
-                <h2 class="section-title">World Cup <span>Updates</span></h2>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                    Relive the best moments from the historic 2026 World Cup.
-                </p>
-            </div>
-            
-            <div class="gallery-grid" id="gallery-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
-                <!-- Injected dynamically by app.js -->
-                <div class="glass-card" style="padding: 3rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);"></i>
-                    <p>Loading gallery...</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- 7. LIVE STREAM TAB -->
-        <section id="livestream" class="tab-content">
-            <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h2 class="section-title">Live <span>Streaming</span></h2>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                        Watch the FIFA World Cup 2026 matches live right here.
-                    </p>
-                </div>
-                <div class="live-indicator" style="background: rgba(239, 68, 68, 0.15); color: var(--accent); padding: 0.5rem 1rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem; border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; gap: 0.5rem; letter-spacing: 1px;">
-                    <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; animation: pulseGlow 1.5s infinite;"></span> LIVE NOW
-                </div>
-            </div>
-            
-            <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
-                <div style="max-width: 800px; width: 100%; margin: 0 auto;">
-                    <div class="video-container" id="viewer-video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                        <video id="viewer-remote-video" controls autoplay playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain;"></video>
-                        <div id="viewer-status-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; background: rgba(0,0,0,0.7); z-index: 10; font-family: var(--font-heading);">
-                            <div style="text-align: center;">
-                                <i class="fas fa-tv" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted);"></i>
-                                <p id="viewer-status-text">Stream offline or disconnected</p>
-                                <button id="btn-join-stream" class="btn btn-primary" style="margin: 1rem auto 0 auto;" onclick="joinStream()">Join Stream</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="stream-info" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                    <div>
-                        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 0.5rem;">World Cup Final Match Live</h3>
-                        <p style="color: var(--text-muted);">Estadio Azteca, Mexico City</p>
-                    </div>
-                    <div style="display: flex; gap: 1rem;">
-                        <button class="btn btn-primary" onclick="toggleFullScreen('viewer-video-container')"><i class="fas fa-expand"></i> Full Screen</button>
-                        <button class="btn btn-primary" onclick="window.open('https://www.fifa.com', '_blank')"><i class="fas fa-external-link-alt"></i> Official Broadcaster</button>
-                    </div>
-                </div>
-            </div>
-        </section>
 
     </main>
 
-    <!-- FLOATING POPUP TEAM DETAIL MODAL -->
-    <div id="team-modal" class="modal-overlay">
-        <div class="glass-panel modal-card">
-            <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-header">
-                <img src="" id="modal-flag-img" class="modal-flag" alt="Modal Flag" onerror="this.src='https://flagcdn.com/w160/gb.png'">
-                <div class="modal-title-info">
-                    <h2 id="modal-team-name">Argentina</h2>
-                    <span id="modal-group-lbl" class="modal-group-badge">Group J</span>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="info-field">
-                    <h4>Confederation</h4>
-                    <p id="modal-conf">CONMEBOL</p>
-                </div>
-                <div class="info-field">
-                    <h4>FIFA Rank</h4>
-                    <p id="modal-rank">#1</p>
-                </div>
-                <div class="info-field" style="grid-column: 1 / -1;">
-                    <h4>Key Star Player</h4>
-                    <p id="modal-player" style="color: var(--primary);">Lionel Messi</p>
-                </div>
-                <div class="info-field" style="grid-column: 1 / -1;">
-                    <h4>Head Coach</h4>
-                    <p id="modal-coach">Lionel Scaloni</p>
-                </div>
-                <div class="info-field" style="grid-column: 1 / -1; margin-top: 0.5rem;">
-                    <button id="view-squad-btn" class="btn btn-primary" style="width: 100%; justify-content: center;">
-                        <i class="fas fa-users"></i> View 23-Man World Cup Squad
-                    </button>
-                </div>
-                <div id="modal-squad-list" style="display: none; grid-column: 1 / -1; margin-top: 1rem; max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                    <!-- Squad list injected here -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- GALLERY MODAL -->
-    <div id="gallery-modal" class="modal-overlay" onclick="closeGalleryModal()">
-        <div class="glass-panel modal-card" onclick="event.stopPropagation();" style="max-width: 800px; padding: 1rem; position: relative; text-align: left;">
-            <button class="close-modal" onclick="closeGalleryModal()" style="position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.5); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;"><i class="fas fa-times"></i></button>
-            <img id="gallery-modal-img" src="" alt="Gallery Image" style="width: 100%; height: auto; border-radius: 8px; max-height: 70vh; object-fit: contain;">
-            <div style="margin-top: 1rem; padding: 0 0.5rem;">
-                <p id="gallery-modal-caption" style="font-size: 1.1rem; color: white; margin-bottom: 0.5rem;"></p>
-                <p id="gallery-modal-date" style="color: var(--text-muted); font-size: 0.9rem;"></p>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Scripts -->
     <!-- Firebase Compat SDKs -->
