@@ -624,7 +624,7 @@ function resetAllPredictions() {
 // Storage Management (Firebase or Local fallback)
 function saveToLocalStorage() {
     const data = {
-        version: 5,
+        version: 6,
         fixtures: appState.fixtures,
         bracket: appState.bracket,
         standingsOverrides: appState.standingsOverrides,
@@ -633,13 +633,13 @@ function saveToLocalStorage() {
     if (dbRef) {
         dbRef.set(data);
     } else {
-        localStorage.setItem("fifa2026_simulator_state_v5", JSON.stringify(data));
+        localStorage.setItem("fifa2026_simulator_state_v6", JSON.stringify(data));
     }
 }
 
 function loadFromLocalStorage() {
     if (!dbRef) {
-        const saved = localStorage.getItem("fifa2026_simulator_state_v5");
+        const saved = localStorage.getItem("fifa2026_simulator_state_v6");
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -1115,6 +1115,17 @@ function closeModal() {
 
 // Knockout Bracket visualizer
 function renderBracket() {
+    // Strict Enforcement: Wipe default seeded bracket if group stages are not finished
+    const playedMatches = appState.fixtures.filter(m => m.homeScore !== null && m.awayScore !== null).length;
+    if (playedMatches < 90) {
+        ['r32', 'r16', 'qf', 'sf'].forEach(phase => {
+            appState.bracket[phase].forEach(m => { m.home = null; m.away = null; m.winner = null; });
+        });
+        appState.bracket.final.home = null;
+        appState.bracket.final.away = null;
+        appState.bracket.final.winner = null;
+    }
+
     const r32Left = document.getElementById("bracket-r32-left");
     const r32Right = document.getElementById("bracket-r32-right");
     const r16Left = document.getElementById("bracket-r16-left");
