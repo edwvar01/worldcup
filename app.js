@@ -36,7 +36,7 @@ if (firebaseConfig.apiKey) {
     firebase.database().ref('admin-credentials').once('value').then(snap => {
         if (!snap.exists()) {
             firebase.database().ref('admin-credentials').set({
-                username: "admin",
+                username: "cekiedcfootball",
                 password: "password123"
             });
             console.log("Admin credentials seeded in database.");
@@ -59,7 +59,7 @@ function attemptAdminLogin() {
 
     if (!dbRef) {
         // Fallback for local testing without Firebase
-        if (user === "admin" && pass === "admin") {
+        if (user === "cekiedcfootball" && pass === "admin") {
             sessionStorage.setItem('fifa2026_admin_auth', 'true');
             location.reload();
         } else {
