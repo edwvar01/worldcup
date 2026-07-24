@@ -237,7 +237,8 @@ function initFixtures() {
                     date: dateStr,
                     time: timeStr,
                     timeIST: "", // dynamically generated in UI based on UTC offset now
-                    venue: stadium.name + ", " + stadium.city
+                    venue: stadium.name + ", " + stadium.city,
+                    approved: false
                 });
                 matchId++;
             });
@@ -268,7 +269,7 @@ function calculateStandings() {
 
     // Loop through matches
     appState.fixtures.forEach(m => {
-        if (m.homeScore != null && m.awayScore != null) {
+        if (m.homeScore != null && m.awayScore != null && m.approved) {
             const hs = parseInt(m.homeScore);
             const as = parseInt(m.awayScore);
             const group = m.group;
@@ -339,8 +340,8 @@ function calculateStandings() {
 
 // Ranks 4th-placed teams (we need 5) and seeds Round of 32
 function seedRoundOf32() {
-    // Check if all group stage matches have been played
-    const playedMatches = appState.fixtures.filter(m => m.homeScore !== null && m.awayScore !== null).length;
+    // Check if all group stage matches have been played AND approved
+    const playedMatches = appState.fixtures.filter(m => m.homeScore !== null && m.awayScore !== null && m.approved).length;
     if (playedMatches < 90) {
         appState.bracket.r32.forEach(m => {
             m.home = null;
@@ -602,6 +603,7 @@ function resetAllPredictions() {
     appState.fixtures.forEach(m => {
         m.homeScore = null;
         m.awayScore = null;
+        m.approved = false;
     });
 
     // Reset bracket fully
@@ -624,7 +626,7 @@ function resetAllPredictions() {
 // Storage Management (Firebase or Local fallback)
 function saveToLocalStorage() {
     const data = {
-        version: 6,
+        version: 7,
         fixtures: appState.fixtures,
         bracket: appState.bracket,
         standingsOverrides: appState.standingsOverrides,
@@ -633,13 +635,13 @@ function saveToLocalStorage() {
     if (dbRef) {
         dbRef.set(data);
     } else {
-        localStorage.setItem("fifa2026_simulator_state_v6", JSON.stringify(data));
+        localStorage.setItem("fifa2026_simulator_state_v7", JSON.stringify(data));
     }
 }
 
 function loadFromLocalStorage() {
     if (!dbRef) {
-        const saved = localStorage.getItem("fifa2026_simulator_state_v6");
+        const saved = localStorage.getItem("fifa2026_simulator_state_v7");
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -812,8 +814,11 @@ function renderFixtures() {
         
         // Filter by Venue
         const matchesVenue = venueVal === "all" || m.venue.includes(venueVal);
+        
+        // Hide unapproved matches for normal users
+        const matchesApproved = IS_ADMIN || m.approved;
 
-        return matchesSearch && matchesGroup && matchesVenue;
+        return matchesSearch && matchesGroup && matchesVenue && matchesApproved;
     });
 
     if (filteredMatches.length === 0) {
@@ -893,6 +898,9 @@ function renderFixtures() {
             
             <div class="match-action-area">
                 ${IS_ADMIN ? `
+                <button class="btn-action-mini ${m.approved ? 'saved' : ''}" onclick="toggleMatchApproval(${m.id})" title="Toggle Visibility to Users" style="color: ${m.approved ? 'var(--primary)' : 'var(--text-muted)'}">
+                    <i class="fas ${m.approved ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                </button>
                 <button class="btn-action-mini ${isSaved ? 'saved' : ''}" onclick="this.classList.add('saved');" title="Scores auto-save on typing. Click to visually confirm.">
                     <i class="fas fa-check"></i>
                 </button>
@@ -1115,8 +1123,8 @@ function closeModal() {
 
 // Knockout Bracket visualizer
 function renderBracket() {
-    // Strict Enforcement: Wipe default seeded bracket if group stages are not finished
-    const playedMatches = appState.fixtures.filter(m => m.homeScore !== null && m.awayScore !== null).length;
+    // Strict Enforcement: Wipe default seeded bracket if group stages are not finished & approved
+    const playedMatches = appState.fixtures.filter(m => m.homeScore !== null && m.awayScore !== null && m.approved).length;
     if (playedMatches < 90) {
         ['r32', 'r16', 'qf', 'sf'].forEach(phase => {
             appState.bracket[phase].forEach(m => { m.home = null; m.away = null; m.winner = null; });
@@ -1371,8 +1379,8 @@ window.addEventListener("DOMContentLoaded", () => {
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data && data.fixtures) {
-                if (data.version !== 5) {
-                    console.log("Stale cloud data detected. Forcing cloud sync with local v5 fixtures.");
+                if (data.version !== 7) {
+                    console.log("Stale cloud data detected. Forcing cloud sync with local v7 fixtures.");
                     saveToLocalStorage();
                     return;
                 }
@@ -1963,4 +1971,32 @@ function toggleFullScreen(elementId) {
             document.webkitExitFullscreen();
         }
     }
+}
+
+// Admin Match Approval Functions
+function toggleMatchApproval(id) {
+    if (!IS_ADMIN) return;
+    const match = appState.fixtures.find(m => m.id === id);
+    if (match) {
+        match.approved = !match.approved;
+        calculateStandings();
+        saveToLocalStorage();
+        renderAll();
+    }
+}
+
+function approveAllMatches() {
+    if (!IS_ADMIN) return;
+    appState.fixtures.forEach(m => m.approved = true);
+    calculateStandings();
+    saveToLocalStorage();
+    renderAll();
+}
+
+function hideAllMatches() {
+    if (!IS_ADMIN) return;
+    appState.fixtures.forEach(m => m.approved = false);
+    calculateStandings();
+    saveToLocalStorage();
+    renderAll();
 }
