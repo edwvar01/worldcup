@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Simulate groups and predict the champion of the historic 48-team FIFA World Cup 2026 in USA, Canada, and Mexico. Complete fixtures, team database, and interactive bracket predictor.">
+    <meta name="description" content="Simulate groups and predict the champion of the historic 45-team FIFA World Cup 2026 in USA, Canada, and Mexico. Complete fixtures, team database, and interactive bracket predictor.">
     <meta name="keywords" content="FIFA World Cup 2026, World Cup Simulator, World Cup Bracket, Fixtures, Groups, Football, Soccer">
     
     <!-- Icons and Fonts -->
@@ -133,7 +133,7 @@
                 <div>
                     <h2 class="section-title">Groups & <span>Standings</span></h2>
                     <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                        View all 12 groups showing real-time points in the group stage.
+                        View all 9 groups showing real-time points in the group stage.
                     </p>
                 </div>
                 <div class="controls-row">
@@ -176,10 +176,7 @@
                     <option value="G">Group G</option>
                     <option value="H">Group H</option>
                     <option value="I">Group I</option>
-                    <option value="J">Group J</option>
-                    <option value="K">Group K</option>
-                    <option value="L">Group L</option>
-                </select>
+                    </select>
 
                 <select id="filter-venue" class="select-filter" onchange="renderFixtures()">
                     <option value="all">All Venues</option>
@@ -217,7 +214,7 @@
             <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 class="section-title">Knockout Phase <span>Tournament Bracket</span></h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance. Enter real match scores to automatically progress the tournament.
+                    The Top 3 teams from each of the 9 groups + the 5 best 4th-placed teams advance. Enter real match scores to automatically progress the tournament.
                 </p>
             </div>
 
@@ -243,30 +240,20 @@
                 <!-- Tree Bracket flex grid -->
                 <div class="bracket-container">
                     
-                    <!-- Column 1: Round of 32 -->
-                    <div class="bracket-col" id="bracket-r32">
-                        <!-- Injected by app.js -->
-                    </div>
+                    <!-- LEFT WING -->
+                    <div class="bracket-col" id="bracket-r32-left"></div>
+                    <div class="bracket-col" id="bracket-r16-left"></div>
+                    <div class="bracket-col" id="bracket-qf-left"></div>
+                    <div class="bracket-col" id="bracket-sf-left"></div>
 
-                    <!-- Column 2: Round of 16 -->
-                    <div class="bracket-col" id="bracket-r16">
-                        <!-- Injected by app.js -->
-                    </div>
+                    <!-- CENTER -->
+                    <div class="bracket-col bracket-center" id="bracket-final"></div>
 
-                    <!-- Column 3: Quarterfinals -->
-                    <div class="bracket-col" id="bracket-qf">
-                        <!-- Injected by app.js -->
-                    </div>
-
-                    <!-- Column 4: Semifinals -->
-                    <div class="bracket-col" id="bracket-sf">
-                        <!-- Injected by app.js -->
-                    </div>
-
-                    <!-- Column 5: Grand Final Match -->
-                    <div class="bracket-col" id="bracket-final">
-                        <!-- Injected by app.js -->
-                    </div>
+                    <!-- RIGHT WING -->
+                    <div class="bracket-col" id="bracket-sf-right"></div>
+                    <div class="bracket-col" id="bracket-qf-right"></div>
+                    <div class="bracket-col" id="bracket-r16-right"></div>
+                    <div class="bracket-col" id="bracket-r32-right"></div>
 
                 </div>
             </div>

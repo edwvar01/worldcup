@@ -91,79 +91,70 @@ function attemptAdminLogin() {
     });
 }
 
-// 1. Qualified Teams Dataset (48 Teams)
+// 1. Qualified Teams Dataset (45 Teams)
 const TEAMS = {
     // Group A
-    "MEX": { id: "MEX", name: "Mexico", flag: "mx", conf: "CONCACAF", rank: 15, star: "Santiago Giménez", coach: "Javier Aguirre", group: "A" },
-    "RSA": { id: "RSA", name: "South Africa", flag: "za", conf: "CAF", rank: 59, star: "Percy Tau", coach: "Hugo Broos", group: "A" },
-    "KOR": { id: "KOR", name: "South Korea", flag: "kr", conf: "AFC", rank: 23, star: "Son Heung-min", coach: "Hong Myung-bo", group: "A" },
-    "CZE": { id: "CZE", name: "Czechia", flag: "cz", conf: "UEFA", rank: 36, star: "Patrik Schick", coach: "Ivan Hašek", group: "A" },
+    "BRA": { id: "BRA", name: "Brazil", flag: "br", conf: "CONMEBOL", rank: 5, star: "Vinícius Júnior", coach: "Dorival Júnior", group: "A" },
+    "DEN": { id: "DEN", name: "Denmark", flag: "dk", conf: "UEFA", rank: 21, star: "Christian Eriksen", coach: "Kasper Hjulmand", group: "A" },
+    "CIV": { id: "CIV", name: "Ivory Coast", flag: "ci", conf: "CAF", rank: 38, star: "Franck Kessié", coach: "Emerse Faé", group: "A" },
+    "CHN": { id: "CHN", name: "China", flag: "cn", conf: "AFC", rank: 88, star: "Wu Lei", coach: "Aleksandar Janković", group: "A" },
+    "POL": { id: "POL", name: "Poland", flag: "pl", conf: "UEFA", rank: 31, star: "Robert Lewandowski", coach: "Michał Probierz", group: "A" },
     
     // Group B
-    "CAN": { id: "CAN", name: "Canada", flag: "ca", conf: "CONCACAF", rank: 49, star: "Alphonso Davies", coach: "Jesse Marsch", group: "B" },
-    "BIH": { id: "BIH", name: "Bosnia & Herzegovina", flag: "ba", conf: "UEFA", rank: 74, star: "Edin Džeko", coach: "Sergej Barbarez", group: "B" },
-    "QAT": { id: "QAT", name: "Qatar", flag: "qa", conf: "AFC", rank: 34, star: "Akram Afif", coach: "Tintín Márquez", group: "B" },
+    "FRA": { id: "FRA", name: "France", flag: "fr", conf: "UEFA", rank: 2, star: "Kylian Mbappé", coach: "Didier Deschamps", group: "B" },
     "SUI": { id: "SUI", name: "Switzerland", flag: "ch", conf: "UEFA", rank: 19, star: "Granit Xhaka", coach: "Murat Yakin", group: "B" },
+    "QAT": { id: "QAT", name: "Qatar", flag: "qa", conf: "AFC", rank: 34, star: "Akram Afif", coach: "Tintín Márquez", group: "B" },
+    "COD": { id: "COD", name: "DR Congo", flag: "cd", conf: "CAF", rank: 60, star: "Chancel Mbemba", coach: "Sébastien Desabre", group: "B" },
+    "AUS": { id: "AUS", name: "Australia", flag: "au", conf: "AFC", rank: 24, star: "Jackson Irvine", coach: "Tony Popovic", group: "B" },
     
     // Group C
-    "BRA": { id: "BRA", name: "Brazil", flag: "br", conf: "CONMEBOL", rank: 5, star: "Vinícius Júnior", coach: "Dorival Júnior", group: "C" },
-    "MAR": { id: "MAR", name: "Morocco", flag: "ma", conf: "CAF", rank: 13, star: "Achraf Hakimi", coach: "Walid Regragui", group: "C" },
-    "HAI": { id: "HAI", name: "Haiti", flag: "ht", conf: "CONCACAF", rank: 86, star: "Duckens Nazon", coach: "Sébastien Migné", group: "C" },
-    "SCO": { id: "SCO", name: "Scotland", flag: "gb-sct", conf: "UEFA", rank: 39, star: "Scott McTominay", coach: "Steve Clarke", group: "C" },
+    "ARG": { id: "ARG", name: "Argentina", flag: "ar", conf: "CONMEBOL", rank: 1, star: "Lionel Messi", coach: "Lionel Scaloni", group: "C" },
+    "CRO": { id: "CRO", name: "Croatia", flag: "hr", conf: "UEFA", rank: 12, star: "Luka Modrić", coach: "Zlatko Dalić", group: "C" },
+    "USA": { id: "USA", name: "USA", flag: "us", conf: "CONCACAF", rank: 11, star: "Christian Pulisic", coach: "Mauricio Pochettino", group: "C" },
+    "CPV": { id: "CPV", name: "Cabo Verde", flag: "cv", conf: "CAF", rank: 65, star: "Ryan Mendes", coach: "Bubista", group: "C" },
+    "CAN": { id: "CAN", name: "Canada", flag: "ca", conf: "CONCACAF", rank: 49, star: "Alphonso Davies", coach: "Jesse Marsch", group: "C" },
     
     // Group D
-    "USA": { id: "USA", name: "United States", flag: "us", conf: "CONCACAF", rank: 11, star: "Christian Pulisic", coach: "Mauricio Pochettino", group: "D" },
-    "PAR": { id: "PAR", name: "Paraguay", flag: "py", conf: "CONMEBOL", rank: 56, star: "Miguel Almirón", coach: "Gustavo Alfaro", group: "D" },
-    "AUS": { id: "AUS", name: "Australia", flag: "au", conf: "AFC", rank: 24, star: "Jackson Irvine", coach: "Tony Popovic", group: "D" },
-    "TUR": { id: "TUR", name: "Türkiye", flag: "tr", conf: "UEFA", rank: 26, star: "Hakan Çalhanoğlu", coach: "Vincenzo Montella", group: "D" },
+    "POR": { id: "POR", name: "Portugal", flag: "pt", conf: "UEFA", rank: 8, star: "Cristiano Ronaldo", coach: "Roberto Martínez", group: "D" },
+    "NED": { id: "NED", name: "Netherlands", flag: "nl", conf: "UEFA", rank: 7, star: "Virgil van Dijk", coach: "Ronald Koeman", group: "D" },
+    "MEX": { id: "MEX", name: "Mexico", flag: "mx", conf: "CONCACAF", rank: 15, star: "Santiago Giménez", coach: "Javier Aguirre", group: "D" },
+    "NGA": { id: "NGA", name: "Nigeria", flag: "ng", conf: "CAF", rank: 30, star: "Victor Osimhen", coach: "José Peseiro", group: "D" },
+    "SCO": { id: "SCO", name: "Scotland", flag: "gb-sct", conf: "UEFA", rank: 39, star: "Scott McTominay", coach: "Steve Clarke", group: "D" },
     
     // Group E
-    "GER": { id: "GER", name: "Germany", flag: "de", conf: "UEFA", rank: 16, star: "Florian Wirtz", coach: "Julian Nagelsmann", group: "E" },
-    "CUW": { id: "CUW", name: "Curaçao", flag: "cw", conf: "CONCACAF", rank: 90, star: "Juninho Bacuna", coach: "Dick Advocaat", group: "E" },
-    "CIV": { id: "CIV", name: "Côte d'Ivoire", flag: "ci", conf: "CAF", rank: 38, star: "Franck Kessié", coach: "Emerse Faé", group: "E" },
-    "ECU": { id: "ECU", name: "Ecuador", flag: "ec", conf: "CONMEBOL", rank: 31, star: "Piero Hincapié", coach: "Sebastián Beccacece", group: "E" },
+    "BEL": { id: "BEL", name: "Belgium", flag: "be", conf: "UEFA", rank: 6, star: "Kevin De Bruyne", coach: "Domenico Tedesco", group: "E" },
+    "ITA": { id: "ITA", name: "Italy", flag: "it", conf: "UEFA", rank: 9, star: "Federico Chiesa", coach: "Luciano Spalletti", group: "E" },
+    "MAR": { id: "MAR", name: "Morocco", flag: "ma", conf: "CAF", rank: 13, star: "Achraf Hakimi", coach: "Walid Regragui", group: "E" },
+    "SEN": { id: "SEN", name: "Senegal", flag: "sn", conf: "CAF", rank: 21, star: "Sadio Mané", coach: "Pape Thiaw", group: "E" },
+    "RSA": { id: "RSA", name: "South Africa", flag: "za", conf: "CAF", rank: 59, star: "Percy Tau", coach: "Hugo Broos", group: "E" },
     
     // Group F
-    "NED": { id: "NED", name: "Netherlands", flag: "nl", conf: "UEFA", rank: 7, star: "Virgil van Dijk", coach: "Ronald Koeman", group: "F" },
-    "JPN": { id: "JPN", name: "Japan", flag: "jp", conf: "AFC", rank: 18, star: "Kaoru Mitoma", coach: "Hajime Moriyasu", group: "F" },
+    "ENG": { id: "ENG", name: "England", flag: "gb-eng", conf: "UEFA", rank: 4, star: "Jude Bellingham", coach: "Thomas Tuchel", group: "F" },
+    "URU": { id: "URU", name: "Uruguay", flag: "uy", conf: "CONMEBOL", rank: 14, star: "Federico Valverde", coach: "Marcelo Bielsa", group: "F" },
+    "KOR": { id: "KOR", name: "South Korea", flag: "kr", conf: "AFC", rank: 23, star: "Son Heung-min", coach: "Hong Myung-bo", group: "F" },
     "SWE": { id: "SWE", name: "Sweden", flag: "se", conf: "UEFA", rank: 28, star: "Viktor Gyökeres", coach: "Jon Dahl Tomasson", group: "F" },
-    "TUN": { id: "TUN", name: "Tunisia", flag: "tn", conf: "CAF", rank: 41, star: "Ellyes Skhiri", coach: "Faouzi Benzarti", group: "F" },
+    "PAN": { id: "PAN", name: "Panama", flag: "pa", conf: "CONCACAF", rank: 35, star: "Adalberto Carrasquilla", coach: "Thomas Christiansen", group: "F" },
     
     // Group G
-    "BEL": { id: "BEL", name: "Belgium", flag: "be", conf: "UEFA", rank: 6, star: "Kevin De Bruyne", coach: "Domenico Tedesco", group: "G" },
+    "ESP": { id: "ESP", name: "Spain", flag: "es", conf: "UEFA", rank: 3, star: "Lamine Yamal", coach: "Luis de la Fuente", group: "G" },
+    "COL": { id: "COL", name: "Colombia", flag: "co", conf: "CONMEBOL", rank: 9, star: "Luis Díaz", coach: "Néstor Lorenzo", group: "G" },
     "EGY": { id: "EGY", name: "Egypt", flag: "eg", conf: "CAF", rank: 30, star: "Mohamed Salah", coach: "Hossam Hassan", group: "G" },
-    "IRN": { id: "IRN", name: "IR Iran", flag: "ir", conf: "AFC", rank: 20, star: "Mehdi Taremi", coach: "Amir Ghalenoei", group: "G" },
-    "NZL": { id: "NZL", name: "New Zealand", flag: "nz", conf: "OFC", rank: 107, star: "Chris Wood", coach: "Darren Bazeley", group: "G" },
+    "RUS": { id: "RUS", name: "Russia", flag: "ru", conf: "UEFA", rank: 38, star: "Aleksandr Golovin", coach: "Valery Karpin", group: "G" },
+    "WAL": { id: "WAL", name: "Wales", flag: "gb-wls", conf: "UEFA", rank: 29, star: "Brennan Johnson", coach: "Rob Page", group: "G" },
     
     // Group H
-    "ESP": { id: "ESP", name: "Spain", flag: "es", conf: "UEFA", rank: 3, star: "Lamine Yamal", coach: "Luis de la Fuente", group: "H" },
-    "CPV": { id: "CPV", name: "Cabo Verde", flag: "cv", conf: "CAF", rank: 65, star: "Ryan Mendes", coach: "Bubista", group: "H" },
+    "GER": { id: "GER", name: "Germany", flag: "de", conf: "UEFA", rank: 16, star: "Florian Wirtz", coach: "Julian Nagelsmann", group: "H" },
+    "ECU": { id: "ECU", name: "Ecuador", flag: "ec", conf: "CONMEBOL", rank: 31, star: "Piero Hincapié", coach: "Sebastián Beccacece", group: "H" },
+    "JPN": { id: "JPN", name: "Japan", flag: "jp", conf: "AFC", rank: 18, star: "Kaoru Mitoma", coach: "Hajime Moriyasu", group: "H" },
     "KSA": { id: "KSA", name: "Saudi Arabia", flag: "sa", conf: "AFC", rank: 53, star: "Salem Al-Dawsari", coach: "Roberto Mancini", group: "H" },
-    "URU": { id: "URU", name: "Uruguay", flag: "uy", conf: "CONMEBOL", rank: 14, star: "Federico Valverde", coach: "Marcelo Bielsa", group: "H" },
+    "PAR": { id: "PAR", name: "Paraguay", flag: "py", conf: "CONMEBOL", rank: 56, star: "Miguel Almirón", coach: "Gustavo Alfaro", group: "H" },
     
     // Group I
-    "FRA": { id: "FRA", name: "France", flag: "fr", conf: "UEFA", rank: 2, star: "Kylian Mbappé", coach: "Didier Deschamps", group: "I" },
-    "SEN": { id: "SEN", name: "Senegal", flag: "sn", conf: "CAF", rank: 21, star: "Sadio Mané", coach: "Pape Thiaw", group: "I" },
-    "IRQ": { id: "IRQ", name: "Iraq", flag: "iq", conf: "AFC", rank: 58, star: "Aymen Hussein", coach: "Jesús Casas", group: "I" },
     "NOR": { id: "NOR", name: "Norway", flag: "no", conf: "UEFA", rank: 47, star: "Erling Haaland", coach: "Ståle Solbakken", group: "I" },
-    
-    // Group J
-    "ARG": { id: "ARG", name: "Argentina", flag: "ar", conf: "CONMEBOL", rank: 1, star: "Lionel Messi", coach: "Lionel Scaloni", group: "J" },
-    "ALG": { id: "ALG", name: "Algeria", flag: "dz", conf: "CAF", rank: 46, star: "Riyad Mahrez", coach: "Vladimir Petković", group: "J" },
-    "AUT": { id: "AUT", name: "Austria", flag: "at", conf: "UEFA", rank: 22, star: "Marcel Sabitzer", coach: "Ralf Rangnick", group: "J" },
-    "JOR": { id: "JOR", name: "Jordan", flag: "jo", conf: "AFC", rank: 71, star: "Musa Al-Taamari", coach: "Jamal Sellami", group: "J" },
-    
-    // Group K
-    "POR": { id: "POR", name: "Portugal", flag: "pt", conf: "UEFA", rank: 8, star: "Cristiano Ronaldo", coach: "Roberto Martínez", group: "K" },
-    "COD": { id: "COD", name: "DR Congo", flag: "cd", conf: "CAF", rank: 60, star: "Chancel Mbemba", coach: "Sébastien Desabre", group: "K" },
-    "UZB": { id: "UZB", name: "Uzbekistan", flag: "uz", conf: "AFC", rank: 66, star: "Eldor Shomurodov", coach: "Srečko Katanec", group: "K" },
-    "COL": { id: "COL", name: "Colombia", flag: "co", conf: "CONMEBOL", rank: 9, star: "Luis Díaz", coach: "Néstor Lorenzo", group: "K" },
-    
-    // Group L
-    "ENG": { id: "ENG", name: "England", flag: "gb-eng", conf: "UEFA", rank: 4, star: "Jude Bellingham", coach: "Thomas Tuchel", group: "L" },
-    "CRO": { id: "CRO", name: "Croatia", flag: "hr", conf: "UEFA", rank: 12, star: "Luka Modrić", coach: "Zlatko Dalić", group: "L" },
-    "GHA": { id: "GHA", name: "Ghana", flag: "gh", conf: "CAF", rank: 64, star: "Mohammed Kudus", coach: "Otto Addo", group: "L" },
-    "PAN": { id: "PAN", name: "Panama", flag: "pa", conf: "CONCACAF", rank: 35, star: "Adalberto Carrasquilla", coach: "Thomas Christiansen", group: "L" }
+    "IND": { id: "IND", name: "India", flag: "in", conf: "AFC", rank: 117, star: "Sunil Chhetri", coach: "Igor Štimac", group: "I" },
+    "SMR": { id: "SMR", name: "San Marino", flag: "sm", conf: "UEFA", rank: 210, star: "Matteo Vitaioli", coach: "Roberto Cevoli", group: "I" },
+    "AUT": { id: "AUT", name: "Austria", flag: "at", conf: "UEFA", rank: 22, star: "Marcel Sabitzer", coach: "Ralf Rangnick", group: "I" },
+    "TUR": { id: "TUR", name: "Turkey", flag: "tr", conf: "UEFA", rank: 26, star: "Hakan Çalhanoğlu", coach: "Vincenzo Montella", group: "I" }
 };
 
 // 16 Official Stadiums & Cities
@@ -204,134 +195,59 @@ let appState = {
     gallery: []
 };
 
-// 2. Generate Group Fixtures (72 matches total)
+// 2. Generate Group Fixtures (90 matches total)
 function initFixtures() {
-    const EXACT_FIXTURES = [
-        { id: 1, date: "2026-06-12", timeIST: "12:30 a.m.", home: "MEX", away: "RSA", venue: "Estadio Azteca, Mexico City" },
-        { id: 2, date: "2026-06-12", timeIST: "07:30 a.m.", home: "KOR", away: "CZE", venue: "Estadio Akron, Guadalajara" },
-        { id: 3, date: "2026-06-13", timeIST: "12:30 a.m.", home: "CAN", away: "BIH", venue: "BMO Field, Toronto" },
-        { id: 4, date: "2026-06-13", timeIST: "06:30 a.m.", home: "USA", away: "PAR", venue: "SoFi Stadium, Los Angeles" },
-        { id: 5, date: "2026-06-14", timeIST: "12:30 a.m.", home: "QAT", away: "SUI", venue: "Levi's Stadium, San Francisco Bay Area" },
-        { id: 6, date: "2026-06-14", timeIST: "03:30 a.m.", home: "BRA", away: "MAR", venue: "MetLife Stadium, New Jersey" },
-        { id: 7, date: "2026-06-14", timeIST: "06:30 a.m.", home: "HAI", away: "SCO", venue: "Gillette Stadium, Boston" },
-        { id: 8, date: "2026-06-14", timeIST: "09:30 a.m.", home: "AUS", away: "TUR", venue: "Lumen Field, Seattle" },
-        { id: 9, date: "2026-06-14", timeIST: "10:30 p.m.", home: "GER", away: "CUW", venue: "NRG Stadium, Houston" },
-        { id: 10, date: "2026-06-15", timeIST: "01:30 a.m.", home: "NED", away: "JPN", venue: "AT&T Stadium, Dallas" },
-        { id: 11, date: "2026-06-15", timeIST: "04:30 a.m.", home: "CIV", away: "ECU", venue: "Lincoln Financial Field, Philadelphia" },
-        { id: 12, date: "2026-06-15", timeIST: "07:30 a.m.", home: "SWE", away: "TUN", venue: "Estadio BBVA, Monterrey" },
-        { id: 13, date: "2026-06-15", timeIST: "09:30 p.m.", home: "ESP", away: "CPV", venue: "Mercedes-Benz Stadium, Atlanta" },
-        { id: 14, date: "2026-06-16", timeIST: "12:30 a.m.", home: "BEL", away: "EGY", venue: "Lumen Field, Seattle" },
-        { id: 15, date: "2026-06-16", timeIST: "03:30 a.m.", home: "KSA", away: "URU", venue: "Hard Rock Stadium, Miami" },
-        { id: 16, date: "2026-06-16", timeIST: "06:30 a.m.", home: "IRN", away: "NZL", venue: "SoFi Stadium, Los Angeles" },
-        { id: 17, date: "2026-06-17", timeIST: "12:30 a.m.", home: "FRA", away: "SEN", venue: "MetLife Stadium, New Jersey" },
-        { id: 18, date: "2026-06-17", timeIST: "03:30 a.m.", home: "IRQ", away: "NOR", venue: "Gillette Stadium, Boston" },
-        { id: 19, date: "2026-06-17", timeIST: "06:30 a.m.", home: "ARG", away: "ALG", venue: "Arrowhead Stadium, Kansas City" },
-        { id: 20, date: "2026-06-17", timeIST: "09:30 a.m.", home: "AUT", away: "JOR", venue: "Levi's Stadium, San Francisco Bay Area" },
-        { id: 21, date: "2026-06-17", timeIST: "10:30 p.m.", home: "POR", away: "COD", venue: "NRG Stadium, Houston" },
-        { id: 22, date: "2026-06-18", timeIST: "01:30 a.m.", home: "ENG", away: "CRO", venue: "AT&T Stadium, Dallas" },
-        { id: 23, date: "2026-06-18", timeIST: "04:30 a.m.", home: "GHA", away: "PAN", venue: "BMO Field, Toronto" },
-        { id: 24, date: "2026-06-18", timeIST: "07:30 a.m.", home: "UZB", away: "COL", venue: "Estadio Azteca, Mexico City" },
-        { id: 25, date: "2026-06-18", timeIST: "09:30 p.m.", home: "CZE", away: "RSA", venue: "Mercedes-Benz Stadium, Atlanta" },
-        { id: 26, date: "2026-06-19", timeIST: "12:30 a.m.", home: "SUI", away: "BIH", venue: "SoFi Stadium, Los Angeles" },
-        { id: 27, date: "2026-06-19", timeIST: "03:30 a.m.", home: "CAN", away: "QAT", venue: "BC Place, Vancouver" },
-        { id: 28, date: "2026-06-19", timeIST: "06:30 a.m.", home: "MEX", away: "KOR", venue: "Estadio Akron, Guadalajara" },
-        { id: 29, date: "2026-06-20", timeIST: "12:30 a.m.", home: "USA", away: "AUS", venue: "Lumen Field, Seattle" },
-        { id: 30, date: "2026-06-20", timeIST: "03:30 a.m.", home: "SCO", away: "MAR", venue: "Gillette Stadium, Boston" },
-        { id: 31, date: "2026-06-20", timeIST: "06:30 a.m.", home: "BRA", away: "HAI", venue: "Lincoln Financial Field, Philadelphia" },
-        { id: 32, date: "2026-06-20", timeIST: "09:30 a.m.", home: "TUR", away: "PAR", venue: "Levi's Stadium, San Francisco Bay Area" },
-        { id: 33, date: "2026-06-20", timeIST: "10:30 p.m.", home: "NED", away: "SWE", venue: "NRG Stadium, Houston" },
-        { id: 34, date: "2026-06-21", timeIST: "01:30 a.m.", home: "GER", away: "CIV", venue: "BMO Field, Toronto" },
-        { id: 35, date: "2026-06-21", timeIST: "05:30 a.m.", home: "ECU", away: "CUW", venue: "Arrowhead Stadium, Kansas City" },
-        { id: 36, date: "2026-06-21", timeIST: "09:30 a.m.", home: "TUN", away: "JPN", venue: "Estadio BBVA, Monterrey" },
-        { id: 37, date: "2026-06-21", timeIST: "09:30 p.m.", home: "ESP", away: "KSA", venue: "Mercedes-Benz Stadium, Atlanta" },
-        { id: 38, date: "2026-06-22", timeIST: "12:30 a.m.", home: "BEL", away: "IRN", venue: "SoFi Stadium, Los Angeles" },
-        { id: 39, date: "2026-06-22", timeIST: "03:30 a.m.", home: "URU", away: "CPV", venue: "Hard Rock Stadium, Miami" },
-        { id: 40, date: "2026-06-22", timeIST: "06:00 a.m.", home: "NZL", away: "EGY", venue: "BC Place, Vancouver" },
-        { id: 41, date: "2026-06-22", timeIST: "10:30 p.m.", home: "ARG", away: "AUT", venue: "AT&T Stadium, Dallas" },
-        { id: 42, date: "2026-06-23", timeIST: "02:30 a.m.", home: "FRA", away: "IRQ", venue: "Lincoln Financial Field, Philadelphia" },
-        { id: 43, date: "2026-06-23", timeIST: "05:30 a.m.", home: "NOR", away: "SEN", venue: "MetLife Stadium, New Jersey" },
-        { id: 44, date: "2026-06-23", timeIST: "08:30 a.m.", home: "JOR", away: "ALG", venue: "Levi's Stadium, San Francisco Bay Area" },
-        { id: 45, date: "2026-06-23", timeIST: "10:30 p.m.", home: "POR", away: "UZB", venue: "NRG Stadium, Houston" },
-        { id: 46, date: "2026-06-24", timeIST: "12:30 a.m.", home: "ENG", away: "GHA", venue: "Gillette Stadium, Boston" },
-        { id: 47, date: "2026-06-24", timeIST: "03:30 a.m.", home: "PAN", away: "CRO", venue: "BMO Field, Toronto" },
-        { id: 48, date: "2026-06-24", timeIST: "06:30 a.m.", home: "COL", away: "COD", venue: "Estadio Akron, Guadalajara" },
-        { id: 49, date: "2026-06-24", timeIST: "06:30 a.m.", home: "SUI", away: "CAN", venue: "BC Place, Vancouver" },
-        { id: 50, date: "2026-06-25", timeIST: "12:30 a.m.", home: "BIH", away: "QAT", venue: "Lumen Field, Seattle" },
-        { id: 51, date: "2026-06-25", timeIST: "03:30 a.m.", home: "MAR", away: "HAI", venue: "Mercedes-Benz Stadium, Atlanta" },
-        { id: 52, date: "2026-06-25", timeIST: "03:30 a.m.", home: "SCO", away: "BRA", venue: "Hard Rock Stadium, Miami" },
-        { id: 53, date: "2026-06-25", timeIST: "06:30 a.m.", home: "RSA", away: "KOR", venue: "Estadio BBVA, Monterrey" },
-        { id: 54, date: "2026-06-25", timeIST: "06:30 a.m.", home: "CZE", away: "MEX", venue: "Estadio Azteca, Mexico City" },
-        { id: 55, date: "2026-06-26", timeIST: "01:30 a.m.", home: "CUW", away: "CIV", venue: "Lincoln Financial Field, Philadelphia" },
-        { id: 56, date: "2026-06-26", timeIST: "01:30 a.m.", home: "ECU", away: "GER", venue: "MetLife Stadium, New Jersey" },
-        { id: 57, date: "2026-06-26", timeIST: "04:30 a.m.", home: "TUN", away: "NED", venue: "Arrowhead Stadium, Kansas City" },
-        { id: 58, date: "2026-06-26", timeIST: "04:30 a.m.", home: "JPN", away: "SWE", venue: "AT&T Stadium, Dallas" },
-        { id: 59, date: "2026-06-26", timeIST: "07:30 a.m.", home: "TUR", away: "USA", venue: "SoFi Stadium, Los Angeles" },
-        { id: 60, date: "2026-06-26", timeIST: "07:30 a.m.", home: "PAR", away: "AUS", venue: "Levi's Stadium, San Francisco Bay Area" },
-        { id: 61, date: "2026-06-27", timeIST: "12:30 a.m.", home: "NOR", away: "FRA", venue: "Gillette Stadium, Boston" },
-        { id: 62, date: "2026-06-27", timeIST: "12:30 a.m.", home: "SEN", away: "IRQ", venue: "BMO Field, Toronto" },
-        { id: 63, date: "2026-06-27", timeIST: "05:30 a.m.", home: "CPV", away: "KSA", venue: "NRG Stadium, Houston" },
-        { id: 64, date: "2026-06-27", timeIST: "05:30 a.m.", home: "URU", away: "ESP", venue: "Estadio Akron, Guadalajara" },
-        { id: 65, date: "2026-06-27", timeIST: "08:30 a.m.", home: "NZL", away: "BEL", venue: "BC Place, Vancouver" },
-        { id: 66, date: "2026-06-27", timeIST: "08:30 a.m.", home: "EGY", away: "IRN", venue: "Lumen Field, Seattle" },
-        { id: 67, date: "2026-06-28", timeIST: "02:30 a.m.", home: "PAN", away: "ENG", venue: "MetLife Stadium, New Jersey" },
-        { id: 68, date: "2026-06-28", timeIST: "02:30 a.m.", home: "CRO", away: "GHA", venue: "Lincoln Financial Field, Philadelphia" },
-        { id: 69, date: "2026-06-28", timeIST: "05:00 a.m.", home: "COL", away: "POR", venue: "Hard Rock Stadium, Miami" },
-        { id: 70, date: "2026-06-28", timeIST: "05:00 a.m.", home: "COD", away: "UZB", venue: "Mercedes-Benz Stadium, Atlanta" },
-        { id: 71, date: "2026-06-28", timeIST: "07:30 a.m.", home: "ALG", away: "AUT", venue: "Arrowhead Stadium, Kansas City" },
-        { id: 72, date: "2026-06-28", timeIST: "07:30 a.m.", home: "JOR", away: "ARG", venue: "AT&T Stadium, Dallas" }
+    appState.fixtures = [];
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
+    const rounds = [
+        [[0, 1], [2, 3]], // Matchday 1
+        [[0, 2], [4, 1]], // Matchday 2
+        [[0, 3], [2, 4]], // Matchday 3
+        [[0, 4], [3, 1]], // Matchday 4
+        [[1, 2], [3, 4]]  // Matchday 5
     ];
-
-    EXACT_FIXTURES.forEach((m, idx) => {
-        const homeTeam = TEAMS[m.home];
-        if (!homeTeam) return;
-
-        let isPM = m.timeIST.includes("p.m.");
-        let parts = m.timeIST.split(" ")[0].split(":");
-        let h = parseInt(parts[0]);
-        let min = parseInt(parts[1]);
-        if (isPM && h !== 12) h += 12;
-        if (!isPM && h === 12) h = 0;
-        
-        let utcMinutes = h * 60 + min - 330; 
-        
-        const CITY_UTC_OFFSETS = {
-            "Mexico City": 6, "Monterrey": 6, "Guadalajara": 6,
-            "Dallas": 5, "Houston": 5, "Kansas City": 5,
-            "New York": 4, "New Jersey": 4, "Atlanta": 4, "Toronto": 4, "Miami": 4, "Boston": 4, "Philadelphia": 4,
-            "Los Angeles": 7, "Vancouver": 7, "San Francisco": 7, "Seattle": 7
-        };
-        let offset = 4;
-        for (let c in CITY_UTC_OFFSETS) {
-            if (m.venue.includes(c)) offset = CITY_UTC_OFFSETS[c];
-        }
-        
-        let localMinutes = utcMinutes - (offset * 60);
-        while (localMinutes < 0) localMinutes += 24 * 60;
-        localMinutes = localMinutes % (24 * 60);
-        
-        let lh = Math.floor(localMinutes / 60);
-        let lm = localMinutes % 60;
-        const localTimeStr = `${lh.toString().padStart(2, '0')}:${lm.toString().padStart(2, '0')}`;
-
-        appState.fixtures.push({
-            id: m.id,
-            group: homeTeam.group,
-            round: Math.floor(idx / 24) + 1,
-            home: m.home,
-            away: m.away,
-            homeScore: null,
-            awayScore: null,
-            date: m.date,
-            time: localTimeStr,
-            timeIST: m.timeIST,
-            venue: m.venue
+    let matchId = 1;
+    let dateObj = new Date("2026-06-12T00:00:00");
+    
+    rounds.forEach((roundPairings, roundIdx) => {
+        groups.forEach(g => {
+            const groupTeams = Object.values(TEAMS).filter(t => t.group === g);
+            roundPairings.forEach(pair => {
+                if (groupTeams.length < 5) return;
+                const homeTeam = groupTeams[pair[0]];
+                const awayTeam = groupTeams[pair[1]];
+                
+                // Generate sequence of dates from Jun 12 to Jun 27
+                // 90 matches over 15 days = 6 matches per day
+                const dayOffset = Math.floor((matchId - 1) / 6);
+                const matchDate = new Date(dateObj.getTime() + (dayOffset * 86400000));
+                const dateStr = matchDate.toISOString().split('T')[0];
+                
+                const timeStr = ["12:00", "15:00", "18:00", "21:00", "14:00", "19:00"][matchId % 6];
+                const stadium = STADIUMS[matchId % STADIUMS.length];
+                
+                appState.fixtures.push({
+                    id: matchId,
+                    group: g,
+                    round: roundIdx + 1,
+                    home: homeTeam.id,
+                    away: awayTeam.id,
+                    homeScore: null,
+                    awayScore: null,
+                    date: dateStr,
+                    time: timeStr,
+                    timeIST: "", // dynamically generated in UI based on UTC offset now
+                    venue: stadium.name + ", " + stadium.city
+                });
+                matchId++;
+            });
         });
     });
 }
 
 // 3. Initialize Standings structure
 function initStandings() {
-    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
     groups.forEach(g => {
         const groupTeams = Object.values(TEAMS).filter(t => t.group === g);
         appState.standings[g] = groupTeams.map(t => ({
@@ -415,96 +331,81 @@ function calculateStandings() {
     });
 
     // Calculate Best 3rd place teams
-    calculateBest3rdPlaces();
+    // calculateBest3rdPlaces(); removed
 
     // Auto-seed Knockout Round of 32
     seedRoundOf32();
 }
 
-// Ranks all 12 third-placed teams to find the top 8 advancing
-function calculateBest3rdPlaces() {
-    const thirdPlaced = [];
-    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+// Ranks 4th-placed teams (we need 5) and seeds Round of 32
+function seedRoundOf32() {
+    // Check if all group stage matches have been played
+    const playedMatches = appState.fixtures.filter(m => m.homeScore !== null && m.awayScore !== null).length;
+    if (playedMatches < 90) {
+        appState.bracket.r32.forEach(m => {
+            m.home = null;
+            m.away = null;
+            m.winner = null;
+            m.homeScore = null;
+            m.awayScore = null;
+        });
+        syncBracketProgression();
+        return;
+    }
+
+    const standings = appState.standings;
+    const fourthPlaced = [];
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
     
     groups.forEach(g => {
-        const thirdTeam = appState.standings[g][2]; // index 2 is 3rd place
-        if (thirdTeam) {
-            thirdPlaced.push({
-                ...thirdTeam,
-                group: g
-            });
+        if (standings[g] && standings[g][3]) {
+            fourthPlaced.push({ ...standings[g][3], group: g });
         }
     });
 
-    // Sort third place table
-    thirdPlaced.sort((a, b) => {
+    fourthPlaced.sort((a, b) => {
         if (b.pts !== a.pts) return b.pts - a.pts;
         if (b.gd !== a.gd) return b.gd - a.gd;
         if (b.gf !== a.gf) return b.gf - a.gf;
         const teamA = TEAMS[a.id];
         const teamB = TEAMS[b.id];
-        return teamA.rank - teamB.rank;
+        return (teamA ? teamA.rank : 999) - (teamB ? teamB.rank : 999);
     });
 
-    appState.best3rd = thirdPlaced;
-}
+    const best4ths = fourthPlaced.slice(0, 5);
 
-// 5. Knockout Seeding Engine
-function seedRoundOf32() {
-    const standings = appState.standings;
-    const best3rd = appState.best3rd.slice(0, 8); // Top 8 3rd-placed teams
-
-    const top1 = {};
-    const top2 = {};
-    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-    
+    const t1 = [], t2 = [], t3 = [];
     groups.forEach(g => {
-        top1[g] = standings[g][0].id;
-        top2[g] = standings[g][1].id;
+        if (standings[g]) {
+            if (standings[g][0]) t1.push(standings[g][0].id);
+            if (standings[g][1]) t2.push(standings[g][1].id);
+            if (standings[g][2]) t3.push(standings[g][2].id);
+        }
     });
-
-    // Pairings formula to feed Round of 32 (16 Matches)
-    // Dynamic pairing rules ensuring no duplicate assignments or team overlaps:
-    // Slot 1-8: Group leaders (1A - 1H) vs Top 8 Best 3rd places
-    // Slot 9-12: Remaining Group leaders (1I - 1L) vs runners-up (2A - 2D)
-    // Slot 13-16: Remaining runners-up in pairs (2E vs 2F, 2G vs 2H, 2I vs 2J, 2K vs 2L)
     
-    const matchesMap = [
-        { home: top1["A"], away: best3rd[0] ? best3rd[0].id : null },
-        { home: top2["E"], away: top2["F"] },
-        { home: top1["C"], away: best3rd[1] ? best3rd[1].id : null },
-        { home: top2["G"], away: top2["H"] },
-        
-        { home: top1["E"], away: best3rd[2] ? best3rd[2].id : null },
-        { home: top2["I"], away: top2["J"] },
-        { home: top1["G"], away: best3rd[3] ? best3rd[3].id : null },
-        { home: top2["K"], away: top2["L"] },
+    const b4 = best4ths.map(t => t.id);
 
-        { home: top1["B"], away: best3rd[4] ? best3rd[4].id : null },
-        { home: top1["I"], away: top2["A"] },
-        { home: top1["D"], away: best3rd[5] ? best3rd[5].id : null },
-        { home: top1["J"], away: top2["B"] },
-
-        { home: top1["F"], away: best3rd[6] ? best3rd[6].id : null },
-        { home: top1["K"], away: top2["C"] },
-        { home: top1["H"], away: best3rd[7] ? best3rd[7].id : null },
-        { home: top1["L"], away: top2["D"] }
-    ];
+    const allAdvancing = [...t1, ...t2, ...t3, ...b4];
+    
+    const matchesMap = [];
+    for (let i = 0; i < 16; i++) {
+        matchesMap.push({ 
+            home: allAdvancing[i] || null, 
+            away: allAdvancing[31 - i] || null 
+        });
+    }
 
     matchesMap.forEach((m, idx) => {
-        // Only override if user hasn't actively predicted the matchup winner yet
-        // or if the underlying seeded teams changed, we reset it
         const currentMatch = appState.bracket.r32[idx];
         if (currentMatch.home !== m.home || currentMatch.away !== m.away) {
             currentMatch.home = m.home;
             currentMatch.away = m.away;
-            currentMatch.winner = null; // Reset winner on seeding changes
+            currentMatch.winner = null; 
             currentMatch.homeScore = null;
             currentMatch.awayScore = null;
         }
     });
 
-    // Synchronize rest of bracket
     syncBracketProgression();
 }
 
@@ -723,7 +624,7 @@ function resetAllPredictions() {
 // Storage Management (Firebase or Local fallback)
 function saveToLocalStorage() {
     const data = {
-        version: 2,
+        version: 5,
         fixtures: appState.fixtures,
         bracket: appState.bracket,
         standingsOverrides: appState.standingsOverrides,
@@ -732,13 +633,13 @@ function saveToLocalStorage() {
     if (dbRef) {
         dbRef.set(data);
     } else {
-        localStorage.setItem("fifa2026_simulator_state_v2", JSON.stringify(data));
+        localStorage.setItem("fifa2026_simulator_state_v5", JSON.stringify(data));
     }
 }
 
 function loadFromLocalStorage() {
     if (!dbRef) {
-        const saved = localStorage.getItem("fifa2026_simulator_state_v2");
+        const saved = localStorage.getItem("fifa2026_simulator_state_v5");
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -806,7 +707,7 @@ function renderGroups() {
     if (!container) return;
 
     container.innerHTML = "";
-    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    const groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
     groups.forEach(g => {
         const groupCard = document.createElement("div");
@@ -816,9 +717,9 @@ function renderGroups() {
 
         let rowsHtml = "";
         gStandings.forEach((t, idx) => {
-            const isTop2 = idx < 2;
-            const is3rd = idx === 2;
-            const rowClass = isTop2 ? "advancing-top2" : is3rd ? "advancing-3rd" : "";
+            const isTop3 = idx < 3;
+            const is4th = idx === 3;
+            const rowClass = isTop3 ? "advancing-top2" : is4th ? "advancing-3rd" : "";
             
             if (IS_ADMIN) {
                 rowsHtml += `
@@ -899,6 +800,8 @@ function renderFixtures() {
     const filteredMatches = appState.fixtures.filter(m => {
         const teamA = TEAMS[m.home];
         const teamB = TEAMS[m.away];
+        
+        if (!teamA || !teamB) return false; // Safety check
         
         // Search by team name
         const matchesSearch = teamA.name.toLowerCase().includes(searchVal) || 
@@ -1212,25 +1115,29 @@ function closeModal() {
 
 // Knockout Bracket visualizer
 function renderBracket() {
-    const r32Col = document.getElementById("bracket-r32");
-    const r16Col = document.getElementById("bracket-r16");
-    const qfCol = document.getElementById("bracket-qf");
-    const sfCol = document.getElementById("bracket-sf");
+    const r32Left = document.getElementById("bracket-r32-left");
+    const r32Right = document.getElementById("bracket-r32-right");
+    const r16Left = document.getElementById("bracket-r16-left");
+    const r16Right = document.getElementById("bracket-r16-right");
+    const qfLeft = document.getElementById("bracket-qf-left");
+    const qfRight = document.getElementById("bracket-qf-right");
+    const sfLeft = document.getElementById("bracket-sf-left");
+    const sfRight = document.getElementById("bracket-sf-right");
     const finalCol = document.getElementById("bracket-final");
 
-    if (!r32Col) return;
+    if (!r32Left) return;
 
     const bracket = appState.bracket;
 
     // Helper to generate a team slot HTML
-    const getSlotHtml = (m, side, round, matchIdx) => {
+    const getSlotHtml = (m, side, round, matchIdx, isFlipped = false) => {
         const overridenTeamId = appState.bracketOverrides?.[round]?.[matchIdx]?.[side];
         const teamId = overridenTeamId || (side === 'home' ? m.home : m.away);
         const score = side === 'home' ? m.homeScore : m.awayScore;
         
         let teamSelectHtml = "";
         if (IS_ADMIN) {
-            teamSelectHtml = `<select class="bracket-team-select" style="background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px; max-width: 90px; font-size: 0.8rem;" onchange="updateKnockoutTeam('${round}', '${matchIdx}', '${side}', this.value)">`;
+            teamSelectHtml = `<select class="bracket-team-select" style="background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px; max-width: 65px; font-size: 0.7rem;" onchange="updateKnockoutTeam('${round}', '${matchIdx}', '${side}', this.value)">`;
             teamSelectHtml += `<option value="">TBD</option>`;
             Object.values(TEAMS).sort((a,b)=>a.name.localeCompare(b.name)).forEach(tm => {
                 teamSelectHtml += `<option value="${tm.id}" ${tm.id === teamId ? 'selected' : ''}>${tm.name}</option>`;
@@ -1239,128 +1146,98 @@ function renderBracket() {
         }
 
         if (!teamId && !IS_ADMIN) {
-            return `<div class="bracket-team-slot empty">TBD</div>`;
+            return `<div class="bracket-team-slot empty" style="text-align: ${isFlipped ? 'right' : 'left'};">TBD</div>`;
         }
         
         const t = teamId ? TEAMS[teamId] : null;
         let slotClass = "bracket-team-slot";
         if (m.winner !== null && m.winner === teamId) slotClass += " winner";
         if (m.winner !== null && m.winner !== teamId) slotClass += " loser";
+        if (isFlipped) slotClass += " flipped";
 
         return `
-            <div class="${slotClass}" style="display: flex; justify-content: space-between; align-items: center; padding-right: 0.5rem;">
-                <div class="bracket-team-info">
+            <div class="${slotClass}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.3rem 0.5rem; flex-direction: ${isFlipped ? 'row-reverse' : 'row'};">
+                <div class="bracket-team-info" style="display: flex; align-items: center; gap: 0.5rem; flex-direction: ${isFlipped ? 'row-reverse' : 'row'}; text-align: ${isFlipped ? 'right' : 'left'};">
                     ${t ? `<img src="https://flagcdn.com/w40/${t.flag}.png" alt="${t.name}" class="flag-icon" onerror="this.src='https://flagcdn.com/w40/gb.png'">` : '<div class="flag-icon" style="background: rgba(255,255,255,0.1); width: 20px; height: 14px; border-radius: 2px;"></div>'}
-                    ${IS_ADMIN ? teamSelectHtml : `<span>${t.name}</span>`}
+                    ${IS_ADMIN ? teamSelectHtml : `<span>${t ? t.name : 'TBD'}</span>`}
                 </div>
                 ${IS_ADMIN ? `
                 <input type="number" min="0" max="20" class="score-input knockout-score-input" 
-                    style="width: 35px; height: 30px; font-size: 1rem; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white;" 
+                    style="width: 28px; height: 26px; font-size: 0.85rem; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: white; margin-${isFlipped ? 'right' : 'left'}: auto;" 
                     value="${score !== undefined && score !== null ? score : ''}" 
                     onchange="updateKnockoutScore('${round}', ${matchIdx}, '${side}', this.value)">
                 ` : `
-                <span class="score-badge bracket-score-badge">${score !== undefined && score !== null ? score : '-'}</span>
+                <span class="score-badge bracket-score-badge" style="margin-${isFlipped ? 'right' : 'left'}: auto;">${score !== undefined && score !== null ? score : '-'}</span>
                 `}
             </div>
         `;
     };
 
-    // Render Round of 32
-    r32Col.innerHTML = `<div class="bracket-col-header">Round of 32</div><div class="bracket-matchups"></div>`;
-    const r32Matchups = r32Col.querySelector(".bracket-matchups");
-    bracket.r32.forEach((m, idx) => {
-        const card = document.createElement("div");
-        card.className = "bracket-matchup-card";
-        
-        const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m, 'home', 'r32', idx);
+    const renderPhase = (col, headerTitle, roundKey, matchArray, startIndex, isFlipped) => {
+        if (!col) return;
+        col.innerHTML = `<div class="bracket-col-header">${headerTitle}</div><div class="bracket-matchups"></div>`;
+        const matchupsContainer = col.querySelector(".bracket-matchups");
+        matchArray.forEach((m, relativeIdx) => {
+            const idx = startIndex + relativeIdx;
+            const card = document.createElement("div");
+            card.className = "bracket-matchup-card" + (isFlipped ? " flipped" : "");
+            
+            const homeSlot = document.createElement("div");
+            homeSlot.innerHTML = getSlotHtml(m, 'home', roundKey, idx, isFlipped);
 
-        const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m, 'away', 'r32', idx);
+            const awaySlot = document.createElement("div");
+            awaySlot.innerHTML = getSlotHtml(m, 'away', roundKey, idx, isFlipped);
 
-        card.appendChild(homeSlot);
-        card.appendChild(awaySlot);
-        r32Matchups.appendChild(card);
-    });
+            card.appendChild(homeSlot);
+            card.appendChild(awaySlot);
+            matchupsContainer.appendChild(card);
+        });
+    };
 
-    // Render Round of 16
-    r16Col.innerHTML = `<div class="bracket-col-header">Round of 16</div><div class="bracket-matchups"></div>`;
-    const r16Matchups = r16Col.querySelector(".bracket-matchups");
-    bracket.r16.forEach((m, idx) => {
-        const card = document.createElement("div");
-        card.className = "bracket-matchup-card";
+    // Render Round of 32 (16 matches: 8 left, 8 right)
+    renderPhase(r32Left, "Round of 32", "r32", bracket.r32.slice(0, 8), 0, false);
+    renderPhase(r32Right, "Round of 32", "r32", bracket.r32.slice(8, 16), 8, true);
 
-        const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m, 'home', 'r16', idx);
+    // Render Round of 16 (8 matches: 4 left, 4 right)
+    renderPhase(r16Left, "Round of 16", "r16", bracket.r16.slice(0, 4), 0, false);
+    renderPhase(r16Right, "Round of 16", "r16", bracket.r16.slice(4, 8), 4, true);
 
-        const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m, 'away', 'r16', idx);
+    // Render Quarterfinals (4 matches: 2 left, 2 right)
+    renderPhase(qfLeft, "Quarterfinals", "qf", bracket.qf.slice(0, 2), 0, false);
+    renderPhase(qfRight, "Quarterfinals", "qf", bracket.qf.slice(2, 4), 2, true);
 
-        card.appendChild(homeSlot);
-        card.appendChild(awaySlot);
-        r16Matchups.appendChild(card);
-    });
-
-    // Render Quarterfinals
-    qfCol.innerHTML = `<div class="bracket-col-header">Quarterfinals</div><div class="bracket-matchups"></div>`;
-    const qfMatchups = qfCol.querySelector(".bracket-matchups");
-    bracket.qf.forEach((m, idx) => {
-        const card = document.createElement("div");
-        card.className = "bracket-matchup-card";
-
-        const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m, 'home', 'qf', idx);
-
-        const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m, 'away', 'qf', idx);
-
-        card.appendChild(homeSlot);
-        card.appendChild(awaySlot);
-        qfMatchups.appendChild(card);
-    });
-
-    // Render Semifinals
-    sfCol.innerHTML = `<div class="bracket-col-header">Semifinals</div><div class="bracket-matchups"></div>`;
-    const sfMatchups = sfCol.querySelector(".bracket-matchups");
-    bracket.sf.forEach((m, idx) => {
-        const card = document.createElement("div");
-        card.className = "bracket-matchup-card";
-
-        const homeSlot = document.createElement("div");
-        homeSlot.innerHTML = getSlotHtml(m, 'home', 'sf', idx);
-
-        const awaySlot = document.createElement("div");
-        awaySlot.innerHTML = getSlotHtml(m, 'away', 'sf', idx);
-
-        card.appendChild(homeSlot);
-        card.appendChild(awaySlot);
-        sfMatchups.appendChild(card);
-    });
+    // Render Semifinals (2 matches: 1 left, 1 right)
+    renderPhase(sfLeft, "Semifinals", "sf", bracket.sf.slice(0, 1), 0, false);
+    renderPhase(sfRight, "Semifinals", "sf", bracket.sf.slice(1, 2), 1, true);
 
     // Render Final
-    finalCol.innerHTML = `<div class="bracket-col-header">Grand Final</div><div class="bracket-matchups"></div>`;
-    const finalMatchups = finalCol.querySelector(".bracket-matchups");
-    const mFinal = bracket.final;
-    
-    const card = document.createElement("div");
-    card.className = "bracket-matchup-card";
-    card.style.border = "1.5px solid var(--gold)";
+    if (finalCol) {
+        finalCol.innerHTML = `<div class="bracket-col-header" style="color: var(--gold); border-bottom-color: var(--gold);">Grand Final</div><div class="bracket-matchups"></div>`;
+        const finalMatchups = finalCol.querySelector(".bracket-matchups");
+        const mFinal = bracket.final;
+        
+        const card = document.createElement("div");
+        card.className = "bracket-matchup-card final-match-card";
+        card.style.border = "1.5px solid var(--gold)";
+        card.style.boxShadow = "0 0 20px rgba(245, 158, 11, 0.3)";
 
-    const homeSlot = document.createElement("div");
-    homeSlot.innerHTML = getSlotHtml(mFinal, 'home', 'final', 0);
+        const homeSlot = document.createElement("div");
+        homeSlot.innerHTML = getSlotHtml(mFinal, 'home', 'final', 0, false);
 
-    const awaySlot = document.createElement("div");
-    awaySlot.innerHTML = getSlotHtml(mFinal, 'away', 'final', 0);
+        const awaySlot = document.createElement("div");
+        awaySlot.innerHTML = getSlotHtml(mFinal, 'away', 'final', 0, false);
 
-    card.appendChild(homeSlot);
-    card.appendChild(awaySlot);
-    finalMatchups.appendChild(card);
+        card.appendChild(homeSlot);
+        card.appendChild(awaySlot);
+        finalMatchups.appendChild(card);
+    }
 
-    // If there's a champion, make sure the champion display box is populated
-    if (mFinal.winner) {
-        triggerCelebration(mFinal.winner);
+    // Champion display
+    if (bracket.final.winner) {
+        triggerCelebration(bracket.final.winner);
     } else {
-        document.getElementById("champion-display").style.display = "none";
+        const champDisplay = document.getElementById("champion-display");
+        if (champDisplay) champDisplay.style.display = "none";
     }
 }
 
@@ -1483,8 +1360,8 @@ window.addEventListener("DOMContentLoaded", () => {
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data && data.fixtures) {
-                if (data.version !== 2) {
-                    console.log("Stale cloud data detected. Forcing cloud sync with local v2 fixtures.");
+                if (data.version !== 5) {
+                    console.log("Stale cloud data detected. Forcing cloud sync with local v5 fixtures.");
                     saveToLocalStorage();
                     return;
                 }

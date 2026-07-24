@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> FIFA World Cup 2026 - Hub</title>
+    <title>E-footbal Tournament</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    
+
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Simulate groups and predict the champion of the historic 48-team FIFA World Cup 2026 in USA, Canada, and Mexico. Complete fixtures, team database, and interactive bracket predictor.">
-    <meta name="keywords" content="FIFA World Cup 2026, World Cup Simulator, World Cup Bracket, Fixtures, Groups, Football, Soccer">
-    
+    <meta name="description"
+        content="Simulate groups and predict the champion of the historic 45-team efootball tournament 2026 in cek. .">
+
     <!-- Icons and Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <!-- Sticky Navigation Header -->
@@ -24,9 +26,9 @@
                 <div style="display: flex; flex-direction: column;">
                     <span class="logo-text">IEDC CEK</span>
                 </div>
-                <span class="logo-tag">48 Teams</span>
+                <span class="logo-tag">45 Teams</span>
             </a>
-            
+
             <!-- Tab Links -->
             <nav class="nav-links" id="nav-menu-links">
                 <button class="nav-tab active" onclick="switchTab('dashboard')">
@@ -42,7 +44,7 @@
                     <i class="fas fa-sitemap"></i> Tournament Bracket
                 </button>
             </nav>
-            
+
             <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
                 <i class="fas fa-bars"></i>
             </button>
@@ -54,23 +56,25 @@
 
     <!-- Main Content Area -->
     <main>
-        
+
         <!-- 1. DASHBOARD TAB -->
         <section id="dashboard" class="tab-content active">
             <div class="dashboard-grid">
                 <!-- Left Main Panel -->
                 <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    
+
                     <!-- Hero Section -->
                     <div class="hero-card">
                         <span class="hero-badge">July 2026</span>
                         <h1 class="hero-title">E-Football <span>Tournament</span></h1>
                         <p class="hero-desc">
-                           IEDC CE Kidangoor eFootball Tournament 2026 is here! Gather your squad and step onto the pitch for an exciting battle of skill, teamwork, and determination. Every match is a chance to prove yourself and lead your team to glory.
+                            IEDC CE Kidangoor eFootball Tournament 2026 is here! Gather your squad and step onto the
+                            pitch for an exciting battle of skill, teamwork, and determination. Every match is a chance
+                            to prove yourself and lead your team to glory.
 
-​Passion. Teamwork. Victory. This is your moment. Leave your mark on the game. 
+                            ​Passion. Teamwork. Victory. This is your moment. Leave your mark on the game.
                         </p>
-                        
+
                         <!-- Hero Countdown -->
                         <div class="countdown-section" id="countdown-box">
                             <div class="countdown-label">
@@ -96,7 +100,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </section>
@@ -107,7 +111,7 @@
                 <div>
                     <h2 class="section-title">Groups & <span>Standings</span></h2>
                     <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                        View all 12 groups showing real-time points in the group stage.
+                        View all 9 groups showing real-time points in the group stage.
                     </p>
                 </div>
                 <div class="controls-row">
@@ -134,9 +138,10 @@
             <div class="glass-panel filters-bar">
                 <div class="search-input-wrap">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="filter-search" class="search-input" onkeyup="renderFixtures()" placeholder="Search by team (e.g. Argentina, Canada)...">
+                    <input type="text" id="filter-search" class="search-input" onkeyup="renderFixtures()"
+                        placeholder="Search by team (e.g. Argentina, Canada)...">
                 </div>
-                
+
                 <select id="filter-group" class="select-filter" onchange="renderFixtures()">
                     <option value="all">All Groups</option>
                     <option value="A">Group A</option>
@@ -148,10 +153,7 @@
                     <option value="G">Group G</option>
                     <option value="H">Group H</option>
                     <option value="I">Group I</option>
-                    <option value="J">Group J</option>
-                    <option value="K">Group K</option>
-                    <option value="L">Group L</option>
-                </select>
+                    </select>
 
                 <select id="filter-venue" class="select-filter" onchange="renderFixtures()">
                     <option value="all">All Venues</option>
@@ -189,7 +191,8 @@
             <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 class="section-title">Knockout Phase <span>Tournament Bracket</span></h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
-                    The Top 2 teams from each of the 12 groups + the 8 best 3rd-placed teams advance. View the real-time knockout progression.
+                    The Top 3 teams from each of the 9 groups + the 5 best 4th-placed teams advance. View the real-time
+                    knockout progression.
                 </p>
             </div>
 
@@ -198,14 +201,16 @@
                 <!-- Giant celebration display -->
                 <div class="trophy-container" id="champion-display" style="display: none; margin-bottom: 3rem;">
                     <i class="fas fa-trophy trophy-icon-large"></i>
-                    <h2 style="font-family: var(--font-heading); font-size: 2.2rem; margin: 1rem 0 0.5rem 0; text-shadow: 0 0 10px rgba(245,158,11,0.2);">
+                    <h2
+                        style="font-family: var(--font-heading); font-size: 2.2rem; margin: 1rem 0 0.5rem 0; text-shadow: 0 0 10px rgba(245,158,11,0.2);">
                         Predicted World Champion!
                     </h2>
                     <div style="display: flex; justify-content: center; margin-top: 1rem;">
                         <div class="glass-panel champion-spot">
                             <div class="champion-spot-header">Gold Medalist</div>
                             <div class="champion-team-display">
-                                <img src="" id="champ-flag-img" class="champion-flag" alt="Champ Flag" onerror="this.src='https://flagcdn.com/w160/gb.png'">
+                                <img src="" id="champ-flag-img" class="champion-flag" alt="Champ Flag"
+                                    onerror="this.src='https://flagcdn.com/w160/gb.png'">
                                 <span id="champ-team-name" class="champion-name">France</span>
                             </div>
                         </div>
@@ -214,31 +219,21 @@
 
                 <!-- Tree Bracket flex grid -->
                 <div class="bracket-container">
-                    
-                    <!-- Column 1: Round of 32 -->
-                    <div class="bracket-col" id="bracket-r32">
-                        <!-- Injected by app.js -->
-                    </div>
 
-                    <!-- Column 2: Round of 16 -->
-                    <div class="bracket-col" id="bracket-r16">
-                        <!-- Injected by app.js -->
-                    </div>
+                    <!-- LEFT WING -->
+                    <div class="bracket-col" id="bracket-r32-left"></div>
+                    <div class="bracket-col" id="bracket-r16-left"></div>
+                    <div class="bracket-col" id="bracket-qf-left"></div>
+                    <div class="bracket-col" id="bracket-sf-left"></div>
 
-                    <!-- Column 3: Quarterfinals -->
-                    <div class="bracket-col" id="bracket-qf">
-                        <!-- Injected by app.js -->
-                    </div>
+                    <!-- CENTER -->
+                    <div class="bracket-col bracket-center" id="bracket-final"></div>
 
-                    <!-- Column 4: Semifinals -->
-                    <div class="bracket-col" id="bracket-sf">
-                        <!-- Injected by app.js -->
-                    </div>
-
-                    <!-- Column 5: Grand Final Match -->
-                    <div class="bracket-col" id="bracket-final">
-                        <!-- Injected by app.js -->
-                    </div>
+                    <!-- RIGHT WING -->
+                    <div class="bracket-col" id="bracket-sf-right"></div>
+                    <div class="bracket-col" id="bracket-qf-right"></div>
+                    <div class="bracket-col" id="bracket-r16-right"></div>
+                    <div class="bracket-col" id="bracket-r32-right"></div>
 
                 </div>
             </div>
@@ -256,4 +251,5 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>
